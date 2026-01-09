@@ -4,7 +4,7 @@ const DEFAULTS = {
     theme: 'joyOfPainting',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
     pageTitle: 'Quick Links',
-    greeting: 'Welcome',
+    greeting: '',
     computerNamePosition: 'top-right',
     dateTimeFormat: 'both',
     dateTimePosition: 'top-left',
@@ -617,7 +617,7 @@ function loadState() {
             // Restore form settings
             if (state.settings) {
                 document.getElementById('pageTitle').value = state.settings.pageTitle || 'Quick Links';
-                document.getElementById('greeting').value = state.settings.greeting || 'Welcome';
+                document.getElementById('greeting').value = state.settings.greeting || '';
                 document.getElementById('showComputerName').checked = state.settings.showComputerName !== false;
                 document.getElementById('computerNamePosition').value = state.settings.computerNamePosition || 'top-right';
                 document.getElementById('showDateTime').checked = state.settings.showDateTime || false;
@@ -1160,7 +1160,7 @@ function renderAppPresetSelect(selectId, presetKey, targetType, groupId, linkId)
 // Generate the HTML content
 function generateHTML(useComputerNameVariable = false) {
     const pageTitle = document.getElementById('pageTitle').value || 'Landing Page';
-    const greeting = document.getElementById('greeting').value || 'Welcome';
+    const greeting = document.getElementById('greeting').value.trim();
     const showComputerName = document.getElementById('showComputerName').checked;
     const computerNamePosition = document.getElementById('computerNamePosition').value;
     const showDateTime = document.getElementById('showDateTime').checked;
@@ -1246,13 +1246,20 @@ function generateHTML(useComputerNameVariable = false) {
     if (sideLogoUrl && !isSideLogoCorner) {
         // Side logo next to greeting
         const logoFirst = sideLogoPosition === 'left';
-        welcomeHeader += `
+        if (greeting) {
+            welcomeHeader += `
         <div class="greeting-row${sideLogoPosition === 'right' ? ' logo-right' : ''}">
-            ${logoFirst ? sideLogoHTML : ''}<h1>${escapeHtml(greeting)}</h1>${!logoFirst ? sideLogoHTML : ''}
+            ${logoFirst ? sideLogoHTML : ''}<h1 class="greeting-text">${escapeHtml(greeting)}</h1>${!logoFirst ? sideLogoHTML : ''}
         </div>`;
+        } else {
+            welcomeHeader += `
+        <div class="greeting-row">
+            ${sideLogoHTML}
+        </div>`;
+        }
     } else {
         welcomeHeader += `
-        <h1>${escapeHtml(greeting)}</h1>`;
+        ${greeting ? `<h1 class="greeting-text">${escapeHtml(greeting)}</h1>` : ''}`;
     }
 
     // Corner logo overlay HTML (rendered separately in body)
@@ -1527,7 +1534,7 @@ function generateHTML(useComputerNameVariable = false) {
             align-items: center;
             justify-content: center;
             gap: 1.25rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .greeting-row.logo-right {
@@ -1540,9 +1547,13 @@ function generateHTML(useComputerNameVariable = false) {
             flex-shrink: 0;
         }
 
-        h1 {
+        .greeting-text {
             font-size: 3rem;
             color: var(--white);
+            margin: 0 0 2.5rem 0;
+        }
+
+        .greeting-row .greeting-text {
             margin: 0;
         }
 
@@ -1679,7 +1690,7 @@ function generateHTML(useComputerNameVariable = false) {
                 flex: 1 1 100%;
                 max-width: none;
             }
-            h1 {
+            .greeting-text {
                 font-size: 2rem;
             }
         }
@@ -2067,7 +2078,7 @@ function applyImportedConfig(config) {
     // Apply settings
     if (config.settings) {
         document.getElementById('pageTitle').value = config.settings.pageTitle || 'Quick Links';
-        document.getElementById('greeting').value = config.settings.greeting || 'Welcome';
+        document.getElementById('greeting').value = config.settings.greeting || '';
         document.getElementById('showComputerName').checked = config.settings.showComputerName !== false;
         document.getElementById('computerNamePosition').value = config.settings.computerNamePosition || 'top-right';
         document.getElementById('showDateTime').checked = config.settings.showDateTime || false;
