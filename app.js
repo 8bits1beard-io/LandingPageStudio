@@ -1,6 +1,6 @@
 // Default values
 const DEFAULTS = {
-    theme: 'monochrome',
+    theme: 'joyOfPainting',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
     pageTitle: 'Quick Links',
     greeting: 'Welcome',
