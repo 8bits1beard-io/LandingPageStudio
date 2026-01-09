@@ -1,4 +1,5 @@
 // Default values
+const APP_VERSION = '1.0.0';
 const DEFAULTS = {
     theme: 'joyOfPainting',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -652,6 +653,10 @@ function loadState() {
 // Initialize application
 function init() {
     const hasExistingState = loadState();
+    const versionEl = document.getElementById('appVersion');
+    if (versionEl) {
+        versionEl.textContent = `v${APP_VERSION}`;
+    }
 
     renderThemeSwatches();
 
@@ -1260,6 +1265,7 @@ function generateHTML(useComputerNameVariable = false) {
     const config = {
         version: '1.1',
         generator: 'Landing Page Studio',
+        appVersion: APP_VERSION,
         settings: {
             pageTitle,
             greeting,
@@ -1312,6 +1318,7 @@ function generateHTML(useComputerNameVariable = false) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="Landing Page Studio">
+    <meta name="generator-version" content="${APP_VERSION}">
     <meta name="description" content="Quick links landing page">${shouldAutoRefresh ? `
     <meta http-equiv="refresh" content="${autoRefreshDelay};url=${escapeHtml(autoRefreshUrl)}">` : ''}
     <title>${escapeHtml(pageTitle)}</title>
