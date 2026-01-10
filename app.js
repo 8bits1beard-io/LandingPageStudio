@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.2';
+const APP_VERSION = '1.0.3';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -177,6 +177,11 @@ function switchTab(tabName) {
         btn.classList.toggle('active', isActive);
         btn.setAttribute('aria-selected', isActive);
         btn.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+    // Update step indicator
+    document.querySelectorAll('.step-indicator .step').forEach(step => {
+        const isActive = step.dataset.tab === tabName;
+        step.classList.toggle('active', isActive);
     });
     // Update panels
     document.querySelectorAll('.tab-panel').forEach(panel => {

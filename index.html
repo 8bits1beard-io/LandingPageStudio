@@ -12,10 +12,10 @@
 
     <header role="banner">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Landing Page Studio logo">
-            <rect x="3" y="3" width="7" height="7" rx="1.5" fill="#021E44"/>
-            <rect x="14" y="3" width="7" height="7" rx="1.5" fill="#FFB800"/>
-            <rect x="3" y="14" width="7" height="7" rx="1.5" fill="#FFB800"/>
-            <rect x="14" y="14" width="7" height="7" rx="1.5" fill="#021E44"/>
+            <rect x="3" y="3" width="7" height="7" rx="1.5" fill="#1f5fa9"/>
+            <rect x="14" y="3" width="7" height="7" rx="1.5" fill="#d39b3a"/>
+            <rect x="3" y="14" width="7" height="7" rx="1.5" fill="#d39b3a"/>
+            <rect x="14" y="14" width="7" height="7" rx="1.5" fill="#1f5fa9"/>
         </svg>
         <h1>Landing Page Studio</h1>
         <span id="saveIndicator" class="save-indicator" aria-live="polite"></span>
@@ -27,9 +27,18 @@
             <h2 id="config-heading" class="panel-header">Configuration</h2>
             <div class="panel-body editor-scroll">
                 <!-- Tab Navigation -->
+                <div class="step-indicator" role="presentation" aria-hidden="true">
+                    <span class="step active" data-tab="page"><span class="step-number">1</span> Layout</span>
+                    <span class="step-arrow">→</span>
+                    <span class="step" data-tab="theme"><span class="step-number">2</span> Colors</span>
+                    <span class="step-arrow">→</span>
+                    <span class="step" data-tab="links"><span class="step-number">3</span> Links</span>
+                    <span class="step-arrow">→</span>
+                    <span class="step" data-tab="export"><span class="step-number">4</span> Export</span>
+                </div>
                 <nav class="tab-nav" role="tablist">
-                    <button type="button" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-page" tabindex="0" onclick="switchTab('page')" onkeydown="handleTabKeydown(event)">Page</button>
-                    <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-theme" tabindex="-1" onclick="switchTab('theme')" onkeydown="handleTabKeydown(event)">Theme</button>
+                    <button type="button" class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-page" tabindex="0" onclick="switchTab('page')" onkeydown="handleTabKeydown(event)">Layout</button>
+                    <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-theme" tabindex="-1" onclick="switchTab('theme')" onkeydown="handleTabKeydown(event)">Colors</button>
                     <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-links" tabindex="-1" onclick="switchTab('links')" onkeydown="handleTabKeydown(event)">Links</button>
                     <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-export" tabindex="-1" onclick="switchTab('export')" onkeydown="handleTabKeydown(event)">Export</button>
                 </nav>
