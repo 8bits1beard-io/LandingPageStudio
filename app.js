@@ -1,11 +1,15 @@
 // Default values
-const APP_VERSION = '1.0.8';
+const APP_VERSION = '1.0.9';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
     pageTitle: 'Quick Links',
     greeting: '',
     computerNamePosition: 'top-right',
+    networkIdentifierPosition: 'top-left',
+    networkIdentifierDisplay: 'site',
+    networkIdentifierPattern: '.*s0(\\d{4})\\.(\\w+)\\..*',
+    networkIdentifierFallback: 'Unknown',
     dateTimeFormat: 'both',
     dateTimePosition: 'top-left',
     sideLogoPosition: 'left',
@@ -222,7 +226,8 @@ function validatePositions() {
     const warnings = {
         computerName: document.getElementById('computerNamePositionWarning'),
         dateTime: document.getElementById('dateTimePositionWarning'),
-        sideLogo: document.getElementById('sideLogoPositionWarning')
+        sideLogo: document.getElementById('sideLogoPositionWarning'),
+        networkIdentifier: document.getElementById('networkIdentifierPositionWarning')
     };
 
     // Hide all warnings initially
@@ -239,10 +244,24 @@ function validatePositions() {
     }
 
     // Check date/time position
+    const showNetworkIdentifier = document.getElementById('showNetworkIdentifier').checked;
+    const networkIdentifierPosition = document.getElementById('networkIdentifierPosition').value;
+    const networkIdentifierDisplay = document.getElementById('networkIdentifierDisplay').value;
+    const networkIdentifierPattern = document.getElementById('networkIdentifierPattern').value.trim()
+        || DEFAULTS.networkIdentifierPattern;
+    const networkIdentifierFallback = document.getElementById('networkIdentifierFallback').value.trim()
+        || DEFAULTS.networkIdentifierFallback;
     const showDateTime = document.getElementById('showDateTime').checked;
     const dateTimePos = document.getElementById('dateTimePosition').value;
     if (showDateTime && cornerPositions.includes(dateTimePos)) {
         positions.push({ element: 'dateTime', position: dateTimePos });
+    }
+
+    // Check location number position
+    const showNetworkIdentifier = document.getElementById('showNetworkIdentifier').checked;
+    const networkIdentifierPos = document.getElementById('networkIdentifierPosition').value;
+    if (showNetworkIdentifier && cornerPositions.includes(networkIdentifierPos)) {
+        positions.push({ element: 'networkIdentifier', position: networkIdentifierPos });
     }
 
     // Check side logo position
@@ -626,6 +645,11 @@ function saveState() {
             greeting: document.getElementById('greeting').value,
             showComputerName: document.getElementById('showComputerName').checked,
             computerNamePosition: document.getElementById('computerNamePosition').value,
+            showNetworkIdentifier: document.getElementById('showNetworkIdentifier').checked,
+            networkIdentifierPosition: document.getElementById('networkIdentifierPosition').value,
+            networkIdentifierDisplay: document.getElementById('networkIdentifierDisplay').value,
+            networkIdentifierPattern: document.getElementById('networkIdentifierPattern').value,
+            networkIdentifierFallback: document.getElementById('networkIdentifierFallback').value,
             showDateTime: document.getElementById('showDateTime').checked,
             dateTimeFormat: document.getElementById('dateTimeFormat').value,
             dateTimePosition: document.getElementById('dateTimePosition').value,
@@ -692,6 +716,11 @@ function loadState() {
                     : storedGreeting;
                 document.getElementById('showComputerName').checked = state.settings.showComputerName === true;
                 document.getElementById('computerNamePosition').value = state.settings.computerNamePosition || 'top-right';
+                document.getElementById('showNetworkIdentifier').checked = state.settings.showNetworkIdentifier === true;
+                document.getElementById('networkIdentifierPosition').value = state.settings.networkIdentifierPosition || DEFAULTS.networkIdentifierPosition;
+                document.getElementById('networkIdentifierDisplay').value = state.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+                document.getElementById('networkIdentifierPattern').value = state.settings.networkIdentifierPattern || DEFAULTS.networkIdentifierPattern;
+                document.getElementById('networkIdentifierFallback').value = state.settings.networkIdentifierFallback || DEFAULTS.networkIdentifierFallback;
                 document.getElementById('showDateTime').checked = state.settings.showDateTime || false;
                 document.getElementById('dateTimeFormat').value = state.settings.dateTimeFormat || 'both';
                 document.getElementById('dateTimePosition').value = state.settings.dateTimePosition || 'top-left';
@@ -1273,6 +1302,13 @@ function generateHTML(useComputerNameVariable = false) {
     const greeting = document.getElementById('greeting').value.trim();
     const showComputerName = document.getElementById('showComputerName').checked;
     const computerNamePosition = document.getElementById('computerNamePosition').value;
+    const showNetworkIdentifier = document.getElementById('showNetworkIdentifier').checked;
+    const networkIdentifierPosition = document.getElementById('networkIdentifierPosition').value;
+    const networkIdentifierDisplay = document.getElementById('networkIdentifierDisplay').value;
+    const networkIdentifierPattern = document.getElementById('networkIdentifierPattern').value.trim()
+        || DEFAULTS.networkIdentifierPattern;
+    const networkIdentifierFallback = document.getElementById('networkIdentifierFallback').value.trim()
+        || DEFAULTS.networkIdentifierFallback;
     const showDateTime = document.getElementById('showDateTime').checked;
     const dateTimeFormat = document.getElementById('dateTimeFormat').value;
     const dateTimePosition = document.getElementById('dateTimePosition').value;
@@ -1289,6 +1325,8 @@ function generateHTML(useComputerNameVariable = false) {
     const shouldAutoRefresh = enableAutoRefresh && autoRefreshValid;
 
     const computerNameDisplay = useComputerNameVariable ? '$computerName' : 'COMPUTER-NAME';
+    const networkDisplayValue = useComputerNameVariable ? '$networkDisplay' : networkIdentifierFallback;
+    const networkInFooter = showNetworkIdentifier && networkIdentifierPosition === 'footer';
 
     // Build links HTML
     let linksHTML = '';
@@ -1390,6 +1428,11 @@ function generateHTML(useComputerNameVariable = false) {
             greeting,
             showComputerName,
             computerNamePosition,
+            showNetworkIdentifier,
+            networkIdentifierPosition,
+            networkIdentifierDisplay,
+            networkIdentifierPattern,
+            networkIdentifierFallback,
             showDateTime,
             dateTimeFormat,
             dateTimePosition,
@@ -1498,36 +1541,53 @@ function generateHTML(useComputerNameVariable = false) {
             z-index: 50;
         }
 
-        .computer-name.top-right {
+        .computer-name.top-right,
+        .network-identifier.top-right {
             top: 1rem;
             right: 1rem;
         }
 
-        .computer-name.top-center {
+        .computer-name.top-center,
+        .network-identifier.top-center {
             top: 1rem;
             left: 50%;
             transform: translateX(-50%);
         }
 
-        .computer-name.top-left {
+        .computer-name.top-left,
+        .network-identifier.top-left {
             top: 1rem;
             left: 1rem;
         }
 
-        .computer-name.bottom-right {
+        .computer-name.bottom-right,
+        .network-identifier.bottom-right {
             bottom: 1rem;
             right: 1rem;
         }
 
-        .computer-name.bottom-center {
+        .computer-name.bottom-center,
+        .network-identifier.bottom-center {
             bottom: 1rem;
             left: 50%;
             transform: translateX(-50%);
         }
 
-        .computer-name.bottom-left {
+        .computer-name.bottom-left,
+        .network-identifier.bottom-left {
             bottom: 1rem;
             left: 1rem;
+        }
+
+        .network-identifier {
+            position: fixed;
+            background-color: var(--white);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 50;
         }
 
         .date-time {
@@ -1826,6 +1886,11 @@ ${showComputerName ? `
         ${computerNameDisplay}
     </div>
 ` : ''}
+${showNetworkIdentifier && networkIdentifierPosition !== 'footer' ? `
+    <div class="network-identifier ${networkIdentifierPosition}" role="status" aria-label="Network identifier: ${networkDisplayValue}">
+        ${networkDisplayValue}
+    </div>
+` : ''}
 ${showDateTime && dateTimePosition !== 'footer' ? `
     <div class="date-time ${dateTimePosition}" role="timer" aria-label="Current date and time" id="datetime-display">
         --
@@ -1839,10 +1904,11 @@ ${cornerLogoHTML}
 ${linksHTML}
         </nav>
     </main>
-${(showFooter && footerText) || (showDateTime && dateTimePosition === 'footer') ? `
+${(showFooter && footerText) || (showDateTime && dateTimePosition === 'footer') || networkInFooter ? `
     <footer role="contentinfo">
         ${showFooter && footerText ? `<p>${escapeHtml(footerText)}</p>` : ''}
         ${showDateTime && dateTimePosition === 'footer' ? `<p class="footer-datetime" id="datetime-display">--</p>` : ''}
+        ${networkInFooter ? `<p>${escapeHtml(networkDisplayValue)}</p>` : ''}
     </footer>
 ` : ''}
 ${showDateTime ? `
@@ -1875,10 +1941,12 @@ ${showDateTime ? `
 </html>`;
 }
 
-// Update date/time position options to exclude computer name position
+// Update date/time position options to exclude reserved positions
 function updateDateTimePositionOptions() {
     const showComputerName = document.getElementById('showComputerName').checked;
     const computerNamePosition = document.getElementById('computerNamePosition').value;
+    const showNetworkIdentifier = document.getElementById('showNetworkIdentifier').checked;
+    const networkIdentifierPosition = document.getElementById('networkIdentifierPosition').value;
     const dateTimeSelect = document.getElementById('dateTimePosition');
     const currentValue = dateTimeSelect.value;
 
@@ -1892,9 +1960,15 @@ function updateDateTimePositionOptions() {
         { value: 'footer', label: 'In Footer' }
     ];
 
-    // Filter out the computer name position if computer name is shown
-    const availablePositions = showComputerName
-        ? allPositions.filter(p => p.value !== computerNamePosition)
+    const blockedPositions = [];
+    if (showComputerName) {
+        blockedPositions.push(computerNamePosition);
+    }
+    if (showNetworkIdentifier && networkIdentifierPosition !== 'footer') {
+        blockedPositions.push(networkIdentifierPosition);
+    }
+    const availablePositions = blockedPositions.length
+        ? allPositions.filter(p => !blockedPositions.includes(p.value))
         : allPositions;
 
     // Rebuild options
@@ -1928,6 +2002,11 @@ function updatePreview() {
     const showDateTime = document.getElementById('showDateTime').checked;
     document.getElementById('dateTimeOptionsGroup').style.display = showDateTime ? 'block' : 'none';
     document.getElementById('dateTimePositionGroup').style.display = showDateTime ? 'block' : 'none';
+
+    // Toggle network identifier visibility
+    const showNetworkIdentifier = document.getElementById('showNetworkIdentifier').checked;
+    document.getElementById('networkIdentifierPositionGroup').style.display = showNetworkIdentifier ? 'block' : 'none';
+    document.getElementById('networkIdentifierDetails').style.display = showNetworkIdentifier ? 'block' : 'none';
 
     // Update date/time position options when computer name settings change
     if (showDateTime) {
@@ -2010,6 +2089,23 @@ Write-Log "Created shortcut: ${escapedName}"
 # Author: Joshua Walderbach
 
 $computerName = $env:COMPUTERNAME
+$networkDisplay = '${networkIdentifierFallback.replace(/'/g, "''")}'
+$networkPattern = '${networkIdentifierPattern.replace(/'/g, "''")}'
+$networkMode = '${networkIdentifierDisplay.replace(/'/g, "''")}'
+try {
+    $dnsName = [System.Net.Dns]::GetHostEntry($env:COMPUTERNAME).HostName
+    if ($networkMode -eq 'fqdn') {
+        $networkDisplay = $dnsName
+    } elseif ($dnsName -match $networkPattern) {
+        if ($networkMode -eq 'site' -and $Matches.Count -ge 2) {
+            $networkDisplay = $Matches[1]
+        } elseif ($networkMode -eq 'region' -and $Matches.Count -ge 3) {
+            $networkDisplay = $Matches[2]
+        }
+    }
+} catch {
+    $networkDisplay = '${networkIdentifierFallback.replace(/'/g, "''")}'
+}
 $outputFolder = "${escapedFolderPath}"
 $outputPath = "${escapedDestPath}"
 $logFolder = "${escapedFolderPath}\\Logs"
@@ -2204,6 +2300,11 @@ function applyImportedConfig(config) {
         document.getElementById('greeting').value = config.settings.greeting || '';
         document.getElementById('showComputerName').checked = config.settings.showComputerName === true;
         document.getElementById('computerNamePosition').value = config.settings.computerNamePosition || 'top-right';
+        document.getElementById('showNetworkIdentifier').checked = config.settings.showNetworkIdentifier === true;
+        document.getElementById('networkIdentifierPosition').value = config.settings.networkIdentifierPosition || DEFAULTS.networkIdentifierPosition;
+        document.getElementById('networkIdentifierDisplay').value = config.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+        document.getElementById('networkIdentifierPattern').value = config.settings.networkIdentifierPattern || DEFAULTS.networkIdentifierPattern;
+        document.getElementById('networkIdentifierFallback').value = config.settings.networkIdentifierFallback || DEFAULTS.networkIdentifierFallback;
         document.getElementById('showDateTime').checked = config.settings.showDateTime || false;
         document.getElementById('dateTimeFormat').value = config.settings.dateTimeFormat || 'both';
         document.getElementById('dateTimePosition').value = config.settings.dateTimePosition || 'top-left';
@@ -2324,6 +2425,11 @@ function resetAll() {
     document.getElementById('greeting').value = DEFAULTS.greeting;
     document.getElementById('showComputerName').checked = false;
     document.getElementById('computerNamePosition').value = DEFAULTS.computerNamePosition;
+    document.getElementById('showNetworkIdentifier').checked = false;
+    document.getElementById('networkIdentifierPosition').value = DEFAULTS.networkIdentifierPosition;
+    document.getElementById('networkIdentifierDisplay').value = DEFAULTS.networkIdentifierDisplay;
+    document.getElementById('networkIdentifierPattern').value = DEFAULTS.networkIdentifierPattern;
+    document.getElementById('networkIdentifierFallback').value = DEFAULTS.networkIdentifierFallback;
     document.getElementById('showDateTime').checked = false;
     document.getElementById('dateTimeFormat').value = DEFAULTS.dateTimeFormat;
     document.getElementById('dateTimePosition').value = DEFAULTS.dateTimePosition;

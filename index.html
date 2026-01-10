@@ -138,6 +138,52 @@
 
                     <div class="form-group">
                         <div class="checkbox-group">
+                            <input type="checkbox" id="showNetworkIdentifier" onchange="validatePositions(); updatePreview(); updateDateTimePositionOptions();">
+                            <label for="showNetworkIdentifier">Show device identifier from network name</label>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.75rem; margin: 0.35rem 0 0;">
+                            Extract a portion of the device's DNS name (FQDN). Useful for site or region IDs.
+                        </p>
+                    </div>
+
+                    <div id="networkIdentifierDetails" style="display: none;">
+                        <div class="form-group">
+                            <label for="networkIdentifierDisplay">Display value</label>
+                            <select id="networkIdentifierDisplay" onchange="updatePreview()">
+                                <option value="fqdn">Full network name (FQDN)</option>
+                                <option value="site" selected>Site/location ID (capture group 1)</option>
+                                <option value="region">Region code (capture group 2)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="networkIdentifierPattern">Pattern <small>(advanced)</small></label>
+                            <input type="text" id="networkIdentifierPattern" value=".*s0(\d{4})\.(\w+)\..*" oninput="updatePreview()">
+                            <small style="color: var(--text-secondary);">Use capture groups: group 1 = site ID, group 2 = region.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="networkIdentifierFallback">Fallback text</label>
+                            <input type="text" id="networkIdentifierFallback" value="Unknown" oninput="updatePreview()">
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="networkIdentifierPositionGroup" style="display: none;">
+                        <label for="networkIdentifierPosition">Identifier position</label>
+                        <select id="networkIdentifierPosition" onchange="validatePositions(); updatePreview(); updateDateTimePositionOptions();">
+                            <option value="top-left" selected>Top Left</option>
+                            <option value="top-center">Top Center</option>
+                            <option value="top-right">Top Right</option>
+                            <option value="bottom-right">Bottom Right</option>
+                            <option value="bottom-center">Bottom Center</option>
+                            <option value="bottom-left">Bottom Left</option>
+                            <option value="footer">In Footer</option>
+                        </select>
+                        <small id="networkIdentifierPositionWarning" class="position-warning" style="display: none; color: var(--danger);">Position conflicts with another element</small>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
                             <input type="checkbox" id="showDateTime" onchange="updatePreview()">
                             <label for="showDateTime">Show date/time <small>(ISO 8601)</small></label>
                         </div>
