@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.1';
+const APP_VERSION = '1.0.2';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -30,7 +30,7 @@ const TEMPLATES = {
                 topLogoUrl: '',
                 sideLogoUrl: '',
                 sideLogoPosition: 'left',
-                showFooter: true,
+                showFooter: false,
                 footerText: 'Need help? Visit the service desk or call 555-0100.',
                 enableAutoRefresh: false,
                 autoRefreshDelay: '30',
@@ -633,7 +633,7 @@ function loadState() {
                 document.getElementById('topLogoUrl').value = state.settings.topLogoUrl || state.settings.headerLogoUrl || state.settings.logoUrl || '';
                 document.getElementById('sideLogoUrl').value = state.settings.sideLogoUrl || state.settings.cornerLogoUrl || '';
                 document.getElementById('sideLogoPosition').value = state.settings.sideLogoPosition || 'left';
-                document.getElementById('showFooter').checked = state.settings.showFooter !== false;
+                document.getElementById('showFooter').checked = state.settings.showFooter === true;
                 document.getElementById('footerText').value = state.settings.footerText || '';
                 document.getElementById('enableAutoRefresh').checked = state.settings.enableAutoRefresh || false;
                 document.getElementById('autoRefreshDelay').value = state.settings.autoRefreshDelay || '30';
@@ -2106,7 +2106,7 @@ function applyImportedConfig(config) {
         document.getElementById('topLogoUrl').value = config.settings.topLogoUrl || '';
         document.getElementById('sideLogoUrl').value = config.settings.sideLogoUrl || '';
         document.getElementById('sideLogoPosition').value = config.settings.sideLogoPosition || 'left';
-        document.getElementById('showFooter').checked = config.settings.showFooter !== false;
+        document.getElementById('showFooter').checked = config.settings.showFooter === true;
         document.getElementById('footerText').value = config.settings.footerText || '';
         document.getElementById('enableAutoRefresh').checked = config.settings.enableAutoRefresh || false;
         document.getElementById('autoRefreshDelay').value = config.settings.autoRefreshDelay || '30';
@@ -2224,7 +2224,7 @@ function resetAll() {
     document.getElementById('topLogoUrl').value = '';
     document.getElementById('sideLogoUrl').value = '';
     document.getElementById('sideLogoPosition').value = DEFAULTS.sideLogoPosition;
-    document.getElementById('showFooter').checked = true;
+    document.getElementById('showFooter').checked = false;
     document.getElementById('footerText').value = '';
     document.getElementById('enableAutoRefresh').checked = false;
     document.getElementById('autoRefreshDelay').value = DEFAULTS.autoRefreshDelay;
