@@ -5,6 +5,10 @@ const DEFAULTS = {
     customColors: { primary: '#0053E2', accent: '#FFC220' },
     pageTitle: 'Quick Links',
     greeting: '',
+    greetingFontSize: '3',      // rem
+    greetingSpacing: '2.5',     // rem
+    topLogoWidth: '360',        // px
+    topLogoSpacing: '1.5',      // rem
     computerNamePosition: 'top-right',
     networkIdentifierPosition: 'top-left',
     networkIdentifierDisplay: 'site',
@@ -173,6 +177,15 @@ function debouncedUpdatePreview() {
     debounceTimer = setTimeout(updatePreview, 150);
 }
 
+// Update slider value display
+function updateSliderValue(slider) {
+    const valueSpan = document.getElementById(slider.id + 'Value');
+    if (valueSpan) {
+        const unit = slider.id.includes('Width') ? 'px' : 'rem';
+        valueSpan.textContent = slider.value + unit;
+    }
+}
+
 // Tab switching
 function switchTab(tabName) {
     // Update buttons
@@ -257,11 +270,9 @@ function validatePositions() {
         positions.push({ element: 'dateTime', position: dateTimePos });
     }
 
-    // Check location number position
-    const showNetworkIdentifier = document.getElementById('showNetworkIdentifier').checked;
-    const networkIdentifierPos = document.getElementById('networkIdentifierPosition').value;
-    if (showNetworkIdentifier && cornerPositions.includes(networkIdentifierPos)) {
-        positions.push({ element: 'networkIdentifier', position: networkIdentifierPos });
+    // Check network identifier position
+    if (showNetworkIdentifier && cornerPositions.includes(networkIdentifierPosition)) {
+        positions.push({ element: 'networkIdentifier', position: networkIdentifierPosition });
     }
 
     // Check side logo position
@@ -643,6 +654,8 @@ function saveState() {
         settings: {
             pageTitle: document.getElementById('pageTitle').value,
             greeting: document.getElementById('greeting').value,
+            greetingFontSize: document.getElementById('greetingFontSize').value,
+            greetingSpacing: document.getElementById('greetingSpacing').value,
             showComputerName: document.getElementById('showComputerName').checked,
             computerNamePosition: document.getElementById('computerNamePosition').value,
             showNetworkIdentifier: document.getElementById('showNetworkIdentifier').checked,
@@ -654,6 +667,8 @@ function saveState() {
             dateTimeFormat: document.getElementById('dateTimeFormat').value,
             dateTimePosition: document.getElementById('dateTimePosition').value,
             topLogoUrl: document.getElementById('topLogoUrl').value,
+            topLogoWidth: document.getElementById('topLogoWidth').value,
+            topLogoSpacing: document.getElementById('topLogoSpacing').value,
             sideLogoUrl: document.getElementById('sideLogoUrl').value,
             sideLogoPosition: document.getElementById('sideLogoPosition').value,
             showFooter: document.getElementById('showFooter').checked,
@@ -714,6 +729,22 @@ function loadState() {
                 document.getElementById('greeting').value = (isLegacyState && storedGreeting === 'Welcome')
                     ? ''
                     : storedGreeting;
+
+                // Restore greeting and logo sliders
+                const greetingFontSize = state.settings.greetingFontSize || DEFAULTS.greetingFontSize;
+                const greetingSpacing = state.settings.greetingSpacing || DEFAULTS.greetingSpacing;
+                const topLogoWidth = state.settings.topLogoWidth || DEFAULTS.topLogoWidth;
+                const topLogoSpacing = state.settings.topLogoSpacing || DEFAULTS.topLogoSpacing;
+
+                document.getElementById('greetingFontSize').value = greetingFontSize;
+                document.getElementById('greetingFontSizeValue').textContent = greetingFontSize + 'rem';
+                document.getElementById('greetingSpacing').value = greetingSpacing;
+                document.getElementById('greetingSpacingValue').textContent = greetingSpacing + 'rem';
+                document.getElementById('topLogoWidth').value = topLogoWidth;
+                document.getElementById('topLogoWidthValue').textContent = topLogoWidth + 'px';
+                document.getElementById('topLogoSpacing').value = topLogoSpacing;
+                document.getElementById('topLogoSpacingValue').textContent = topLogoSpacing + 'rem';
+
                 document.getElementById('showComputerName').checked = state.settings.showComputerName === true;
                 document.getElementById('computerNamePosition').value = state.settings.computerNamePosition || 'top-right';
                 document.getElementById('showNetworkIdentifier').checked = state.settings.showNetworkIdentifier === true;
@@ -1446,6 +1477,8 @@ function renderAppPresetSelect(selectId, presetKey, targetType, groupId, linkId)
 function generateHTML(useComputerNameVariable = false) {
     const pageTitle = document.getElementById('pageTitle').value || 'Landing Page';
     const greeting = document.getElementById('greeting').value.trim();
+    const greetingFontSize = document.getElementById('greetingFontSize').value || DEFAULTS.greetingFontSize;
+    const greetingSpacing = document.getElementById('greetingSpacing').value || DEFAULTS.greetingSpacing;
     const showComputerName = document.getElementById('showComputerName').checked;
     const computerNamePosition = document.getElementById('computerNamePosition').value;
     const showNetworkIdentifier = document.getElementById('showNetworkIdentifier').checked;
@@ -1459,6 +1492,8 @@ function generateHTML(useComputerNameVariable = false) {
     const dateTimeFormat = document.getElementById('dateTimeFormat').value;
     const dateTimePosition = document.getElementById('dateTimePosition').value;
     const topLogoUrl = document.getElementById('topLogoUrl').value.trim();
+    const topLogoWidth = document.getElementById('topLogoWidth').value || DEFAULTS.topLogoWidth;
+    const topLogoSpacing = document.getElementById('topLogoSpacing').value || DEFAULTS.topLogoSpacing;
     const sideLogoUrl = document.getElementById('sideLogoUrl').value.trim();
     const sideLogoPosition = document.getElementById('sideLogoPosition').value;
     const showFooter = document.getElementById('showFooter').checked;
@@ -1572,6 +1607,8 @@ function generateHTML(useComputerNameVariable = false) {
         settings: {
             pageTitle,
             greeting,
+            greetingFontSize,
+            greetingSpacing,
             showComputerName,
             computerNamePosition,
             showNetworkIdentifier,
@@ -1583,6 +1620,8 @@ function generateHTML(useComputerNameVariable = false) {
             dateTimeFormat,
             dateTimePosition,
             topLogoUrl,
+            topLogoWidth,
+            topLogoSpacing,
             sideLogoUrl,
             sideLogoPosition,
             showFooter,
@@ -1843,11 +1882,11 @@ function generateHTML(useComputerNameVariable = false) {
         .top-logo-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: ${topLogoSpacing}rem;
         }
 
         .top-logo {
-            width: 360px;
+            width: ${topLogoWidth}px;
             height: auto;
         }
 
@@ -1856,7 +1895,7 @@ function generateHTML(useComputerNameVariable = false) {
             align-items: center;
             justify-content: center;
             gap: 1.25rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: ${greetingSpacing}rem;
         }
 
         .greeting-row.logo-right {
@@ -1870,9 +1909,9 @@ function generateHTML(useComputerNameVariable = false) {
         }
 
         .greeting-text {
-            font-size: 3rem;
+            font-size: ${greetingFontSize}rem;
             color: var(--white);
-            margin: 0 0 2.5rem 0;
+            margin: 0 0 ${greetingSpacing}rem 0;
         }
 
         .greeting-row .greeting-text {
@@ -2185,6 +2224,11 @@ function generatePowerShellScript() {
     const folderPath = destinationPath.substring(0, destinationPath.lastIndexOf('\\')) || 'C:\\ProgramData\\LandingPage';
     const escapedFolderPath = folderPath.replace(/\\/g, '\\\\');
 
+    // Get network identifier settings
+    const networkIdentifierDisplay = document.getElementById('networkIdentifierDisplay').value || DEFAULTS.networkIdentifierDisplay;
+    const networkIdentifierPattern = document.getElementById('networkIdentifierPattern').value.trim() || DEFAULTS.networkIdentifierPattern;
+    const networkIdentifierFallback = document.getElementById('networkIdentifierFallback').value.trim() || DEFAULTS.networkIdentifierFallback;
+
     // Collect all app links for shortcut creation
     const appLinks = [];
     groups.forEach(group => {
@@ -2451,6 +2495,22 @@ function applyImportedConfig(config) {
     if (config.settings) {
         document.getElementById('pageTitle').value = config.settings.pageTitle || 'Quick Links';
         document.getElementById('greeting').value = config.settings.greeting || '';
+
+        // Restore greeting and logo sliders
+        const greetingFontSize = config.settings.greetingFontSize || DEFAULTS.greetingFontSize;
+        const greetingSpacing = config.settings.greetingSpacing || DEFAULTS.greetingSpacing;
+        const topLogoWidth = config.settings.topLogoWidth || DEFAULTS.topLogoWidth;
+        const topLogoSpacing = config.settings.topLogoSpacing || DEFAULTS.topLogoSpacing;
+
+        document.getElementById('greetingFontSize').value = greetingFontSize;
+        document.getElementById('greetingFontSizeValue').textContent = greetingFontSize + 'rem';
+        document.getElementById('greetingSpacing').value = greetingSpacing;
+        document.getElementById('greetingSpacingValue').textContent = greetingSpacing + 'rem';
+        document.getElementById('topLogoWidth').value = topLogoWidth;
+        document.getElementById('topLogoWidthValue').textContent = topLogoWidth + 'px';
+        document.getElementById('topLogoSpacing').value = topLogoSpacing;
+        document.getElementById('topLogoSpacingValue').textContent = topLogoSpacing + 'rem';
+
         document.getElementById('showComputerName').checked = config.settings.showComputerName === true;
         document.getElementById('computerNamePosition').value = config.settings.computerNamePosition || 'top-right';
         document.getElementById('showNetworkIdentifier').checked = config.settings.showNetworkIdentifier === true;
@@ -2576,6 +2636,17 @@ function resetAll() {
     // Reset form fields to defaults
     document.getElementById('pageTitle').value = DEFAULTS.pageTitle;
     document.getElementById('greeting').value = DEFAULTS.greeting;
+
+    // Reset greeting and logo sliders
+    document.getElementById('greetingFontSize').value = DEFAULTS.greetingFontSize;
+    document.getElementById('greetingFontSizeValue').textContent = DEFAULTS.greetingFontSize + 'rem';
+    document.getElementById('greetingSpacing').value = DEFAULTS.greetingSpacing;
+    document.getElementById('greetingSpacingValue').textContent = DEFAULTS.greetingSpacing + 'rem';
+    document.getElementById('topLogoWidth').value = DEFAULTS.topLogoWidth;
+    document.getElementById('topLogoWidthValue').textContent = DEFAULTS.topLogoWidth + 'px';
+    document.getElementById('topLogoSpacing').value = DEFAULTS.topLogoSpacing;
+    document.getElementById('topLogoSpacingValue').textContent = DEFAULTS.topLogoSpacing + 'rem';
+
     document.getElementById('showComputerName').checked = false;
     document.getElementById('computerNamePosition').value = DEFAULTS.computerNamePosition;
     document.getElementById('showNetworkIdentifier').checked = false;
