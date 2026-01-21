@@ -102,12 +102,12 @@
                 <div id="tab-page" class="tab-panel active" role="tabpanel">
                 <fieldset style="border: none; padding: 0; margin: 0;">
                     <legend class="visually-hidden">Page Settings</legend>
-                    <div class="template-import" aria-label="Import existing start page">
+                    <div class="template-import" aria-label="Import configuration">
                         <label for="importFile" class="btn btn-secondary btn-sm" style="cursor: pointer;">
-                            Import Existing Start Page
-                            <input type="file" id="importFile" accept=".html,.htm" onchange="importStartPage(this)" class="visually-hidden">
+                            Load Configuration
+                            <input type="file" id="importFile" accept=".json,.html,.htm" onchange="importConfiguration(this)" class="visually-hidden">
                         </label>
-                        <p class="template-import-note">Load a previously generated start page to edit.</p>
+                        <p class="template-import-note">Load a saved configuration or legacy HTML file.</p>
                     </div>
                     <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
 
@@ -451,18 +451,27 @@
 
                     <div class="output-actions" style="flex-direction: column; align-items: center;">
                         <button type="button" class="btn btn-generate" onclick="downloadScript()">
-                            Download PowerShell Script (Recommended)
+                            Download PowerShell Script
                         </button>
                         <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0.5rem 0;">
                             Captures computer name at runtime. Deploy via Intune/SCCM.
                         </p>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="downloadHTML()" style="margin-top: 0.5rem;">
-                            Download HTML Only
-                        </button>
-                        <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0.25rem 0 0 0;">
-                            For testing. Computer name shows as placeholder.
-                        </p>
+
                         <hr style="width: 100%; margin: 1rem 0; border: none; border-top: 1px solid var(--border);">
+
+                        <div class="section-label">Configuration</div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="exportConfiguration()">
+                                Save Configuration
+                            </button>
+                            <label for="loadConfigFile" class="btn btn-secondary btn-sm" style="cursor: pointer; margin: 0;">
+                                Load Configuration
+                                <input type="file" id="loadConfigFile" accept=".json,.html,.htm" onchange="importConfiguration(this)" class="visually-hidden">
+                            </label>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0.5rem 0 0 0;">
+                            Save or load your settings as a JSON file.
+                        </p>
                     </div>
                 </section>
                 </div>
