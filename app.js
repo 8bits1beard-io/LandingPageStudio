@@ -907,7 +907,7 @@ function handleLinkDragOver(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     const row = e.target.closest('.link-row');
-    if (row && draggedLinkId !== null) {
+    if (row && (draggedLinkId !== null || draggedUngroupedId !== null)) {
         row.classList.add('drag-over');
     }
 }
@@ -921,16 +921,39 @@ function handleLinkDragLeave(e) {
 
 function handleLinkDrop(e, targetGroupId, targetLinkId) {
     e.preventDefault();
+
+    const targetGroup = groups.find(g => g.id === targetGroupId);
+    if (!targetGroup) return;
+
+    const toIndex = targetGroup.links.findIndex(l => l.id === targetLinkId);
+
+    // Handle drop from ungrouped links
+    if (draggedUngroupedId !== null) {
+        const fromIndex = ungroupedLinks.findIndex(l => l.id === draggedUngroupedId);
+        if (fromIndex === -1) return;
+
+        const [movedLink] = ungroupedLinks.splice(fromIndex, 1);
+
+        if (toIndex === -1) {
+            targetGroup.links.push(movedLink);
+        } else {
+            targetGroup.links.splice(toIndex, 0, movedLink);
+        }
+
+        renderGroups();
+        renderUngroupedLinks();
+        updatePreview();
+        announce('Link moved to group');
+        return;
+    }
+
+    // Handle drop from another group
     if (draggedLinkId === null) return;
 
     const sourceGroup = groups.find(g => g.id === draggedLinkGroupId);
-    const targetGroup = groups.find(g => g.id === targetGroupId);
-
-    if (!sourceGroup || !targetGroup) return;
+    if (!sourceGroup) return;
 
     const fromIndex = sourceGroup.links.findIndex(l => l.id === draggedLinkId);
-    const toIndex = targetGroup.links.findIndex(l => l.id === targetLinkId);
-
     if (fromIndex === -1) return;
 
     // Remove from source
@@ -966,7 +989,7 @@ function handleUngroupedDragOver(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     const row = e.target.closest('.link-row');
-    if (row && draggedUngroupedId !== null) {
+    if (row && (draggedUngroupedId !== null || draggedLinkId !== null)) {
         row.classList.add('drag-over');
     }
 }
@@ -980,11 +1003,36 @@ function handleUngroupedDragLeave(e) {
 
 function handleUngroupedDrop(e, targetLinkId) {
     e.preventDefault();
+
+    const toIndex = ungroupedLinks.findIndex(l => l.id === targetLinkId);
+
+    // Handle drop from grouped links
+    if (draggedLinkId !== null) {
+        const sourceGroup = groups.find(g => g.id === draggedLinkGroupId);
+        if (!sourceGroup) return;
+
+        const fromIndex = sourceGroup.links.findIndex(l => l.id === draggedLinkId);
+        if (fromIndex === -1) return;
+
+        const [movedLink] = sourceGroup.links.splice(fromIndex, 1);
+
+        if (toIndex === -1) {
+            ungroupedLinks.push(movedLink);
+        } else {
+            ungroupedLinks.splice(toIndex, 0, movedLink);
+        }
+
+        renderGroups();
+        renderUngroupedLinks();
+        updatePreview();
+        announce('Link moved to standalone');
+        return;
+    }
+
+    // Handle reorder within ungrouped
     if (draggedUngroupedId === null || draggedUngroupedId === targetLinkId) return;
 
     const fromIndex = ungroupedLinks.findIndex(l => l.id === draggedUngroupedId);
-    const toIndex = ungroupedLinks.findIndex(l => l.id === targetLinkId);
-
     if (fromIndex === -1 || toIndex === -1) return;
 
     const [movedLink] = ungroupedLinks.splice(fromIndex, 1);
@@ -993,6 +1041,99 @@ function handleUngroupedDrop(e, targetLinkId) {
     renderUngroupedLinks();
     updatePreview();
     announce('Standalone link reordered');
+}
+
+// Container-level drop handlers for dropping into empty/end of containers
+function handleGroupLinksContainerDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (draggedUngroupedId !== null || draggedLinkId !== null) {
+        e.currentTarget.classList.add('drag-over');
+    }
+}
+
+function handleGroupLinksContainerDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+}
+
+function handleGroupLinksContainerDrop(e, targetGroupId) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+
+    // Don't handle if dropped on a link row (let link handler handle it)
+    if (e.target.closest('.link-row')) return;
+
+    const targetGroup = groups.find(g => g.id === targetGroupId);
+    if (!targetGroup) return;
+
+    // Handle drop from ungrouped links
+    if (draggedUngroupedId !== null) {
+        const fromIndex = ungroupedLinks.findIndex(l => l.id === draggedUngroupedId);
+        if (fromIndex === -1) return;
+
+        const [movedLink] = ungroupedLinks.splice(fromIndex, 1);
+        targetGroup.links.push(movedLink);
+
+        renderGroups();
+        renderUngroupedLinks();
+        updatePreview();
+        announce('Link moved to group');
+        return;
+    }
+
+    // Handle drop from another group
+    if (draggedLinkId !== null) {
+        const sourceGroup = groups.find(g => g.id === draggedLinkGroupId);
+        if (!sourceGroup) return;
+        if (sourceGroup.id === targetGroupId) return; // Same group, ignore
+
+        const fromIndex = sourceGroup.links.findIndex(l => l.id === draggedLinkId);
+        if (fromIndex === -1) return;
+
+        const [movedLink] = sourceGroup.links.splice(fromIndex, 1);
+        targetGroup.links.push(movedLink);
+
+        renderGroups();
+        updatePreview();
+        announce('Link moved to group');
+    }
+}
+
+function handleUngroupedContainerDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (draggedLinkId !== null || draggedUngroupedId !== null) {
+        e.currentTarget.classList.add('drag-over');
+    }
+}
+
+function handleUngroupedContainerDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+}
+
+function handleUngroupedContainerDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+
+    // Don't handle if dropped on a link row (let link handler handle it)
+    if (e.target.closest('.link-row')) return;
+
+    // Handle drop from grouped links
+    if (draggedLinkId !== null) {
+        const sourceGroup = groups.find(g => g.id === draggedLinkGroupId);
+        if (!sourceGroup) return;
+
+        const fromIndex = sourceGroup.links.findIndex(l => l.id === draggedLinkId);
+        if (fromIndex === -1) return;
+
+        const [movedLink] = sourceGroup.links.splice(fromIndex, 1);
+        ungroupedLinks.push(movedLink);
+
+        renderGroups();
+        renderUngroupedLinks();
+        updatePreview();
+        announce('Link moved to standalone');
+    }
 }
 
 // Update group name
@@ -1122,8 +1263,11 @@ function renderGroups() {
                 ${group.icon ? `<img src="${escapeHtml(group.icon)}" alt="" style="width:20px;height:20px;">` : ''}
                 <button type="button" class="btn btn-sm" onclick="clearGroupIcon(${group.id})" aria-label="Clear icon" title="Clear">✕</button>
             </div>
-            <div class="group-links" role="list" aria-label="Links in ${escapeHtml(group.name) || 'this group'}">
-                ${group.links.length === 0 ? '<p class="empty-message" role="listitem">No links in this group</p>' : ''}
+            <div class="group-links" role="list" aria-label="Links in ${escapeHtml(group.name) || 'this group'}"
+                 ondragover="handleGroupLinksContainerDragOver(event)"
+                 ondragleave="handleGroupLinksContainerDragLeave(event)"
+                 ondrop="handleGroupLinksContainerDrop(event, ${group.id})">
+                ${group.links.length === 0 ? '<p class="empty-message" role="listitem">No links in this group. Drag links here.</p>' : ''}
                 ${group.links.map((link, linkIndex) => `
                     <div class="link-row" role="listitem"
                          draggable="true"
@@ -1199,12 +1343,14 @@ function renderGroups() {
 function renderUngroupedLinks() {
     const container = document.getElementById('ungroupedLinksContainer');
 
+    const dropZoneAttrs = `ondragover="handleUngroupedContainerDragOver(event)" ondragleave="handleUngroupedContainerDragLeave(event)" ondrop="handleUngroupedContainerDrop(event)"`;
+
     if (ungroupedLinks.length === 0) {
-        container.innerHTML = '';
+        container.innerHTML = `<div class="ungrouped-drop-zone" ${dropZoneAttrs}><p class="empty-message">Drag links here to make them standalone</p></div>`;
         return;
     }
 
-    container.innerHTML = `<div role="list" aria-label="Standalone links">` + ungroupedLinks.map((link, linkIndex) => `
+    container.innerHTML = `<div role="list" aria-label="Standalone links" ${dropZoneAttrs}>` + ungroupedLinks.map((link, linkIndex) => `
         <div class="link-row" style="margin-bottom: 0.75rem;" role="listitem"
              draggable="true"
              ondragstart="handleUngroupedDragStart(event, ${link.id})"
