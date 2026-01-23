@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.14';
+const APP_VERSION = '1.0.15';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -20,7 +20,23 @@ const DEFAULTS = {
     sideLogoPosition: 'left',
     autoRefreshDelay: '30',
     destinationPath: 'C:\\ProgramData\\LandingPage\\index.html',
-    scriptName: 'MyLandingPage'
+    scriptName: 'MyLandingPage',
+    // Link layout options
+    linkLayout: 'cards',
+    buttonStyle: 'rounded',
+    gridColumns: '3',
+    // Announcement banner
+    bannerEnabled: false,
+    bannerTitle: '',
+    bannerMessage: '',
+    bannerStyle: 'info'
+};
+
+// Banner style colors
+const BANNER_STYLES = {
+    info: { bg: '#dbeafe', border: '#3b82f6', text: '#1e40af' },
+    warning: { bg: '#fef3c7', border: '#f59e0b', text: '#92400e' },
+    urgent: { bg: '#fee2e2', border: '#ef4444', text: '#991b1b' }
 };
 
 const TEMPLATES = {
@@ -984,7 +1000,16 @@ function saveState() {
             autoRefreshDelay: document.getElementById('autoRefreshDelay').value,
             autoRefreshUrl: document.getElementById('autoRefreshUrl').value,
             scriptName: document.getElementById('scriptName').value,
-            destinationPath: document.getElementById('destinationPath').value
+            destinationPath: document.getElementById('destinationPath').value,
+            // Link layout
+            linkLayout: document.getElementById('linkLayout').value,
+            buttonStyle: document.getElementById('buttonStyle').value,
+            gridColumns: document.getElementById('gridColumns').value,
+            // Announcement banner
+            bannerEnabled: document.getElementById('bannerEnabled').checked,
+            bannerTitle: document.getElementById('bannerTitle').value,
+            bannerMessage: document.getElementById('bannerMessage').value,
+            bannerStyle: document.getElementById('bannerStyle').value
         }
     };
     try {
@@ -1073,6 +1098,17 @@ function loadState() {
                 document.getElementById('autoRefreshUrl').value = state.settings.autoRefreshUrl || '';
                 document.getElementById('scriptName').value = state.settings.scriptName || 'MyLandingPage';
                 document.getElementById('destinationPath').value = state.settings.destinationPath || 'C:\\ProgramData\\LandingPage\\index.html';
+
+                // Restore link layout settings
+                document.getElementById('linkLayout').value = state.settings.linkLayout || DEFAULTS.linkLayout;
+                document.getElementById('buttonStyle').value = state.settings.buttonStyle || DEFAULTS.buttonStyle;
+                document.getElementById('gridColumns').value = state.settings.gridColumns || DEFAULTS.gridColumns;
+
+                // Restore announcement banner settings
+                document.getElementById('bannerEnabled').checked = state.settings.bannerEnabled || false;
+                document.getElementById('bannerTitle').value = state.settings.bannerTitle || '';
+                document.getElementById('bannerMessage').value = state.settings.bannerMessage || '';
+                document.getElementById('bannerStyle').value = state.settings.bannerStyle || DEFAULTS.bannerStyle;
 
                 // Restore custom color inputs if custom theme
                 if (selectedTheme === 'custom') {
@@ -1813,6 +1849,19 @@ function generateHTML(useComputerNameVariable = false) {
     const autoRefreshDelay = document.getElementById('autoRefreshDelay').value || '30';
     const autoRefreshUrl = document.getElementById('autoRefreshUrl').value.trim();
     const footerText = document.getElementById('footerText').value || '';
+
+    // Link layout settings
+    const linkLayout = document.getElementById('linkLayout').value || DEFAULTS.linkLayout;
+    const buttonStyle = document.getElementById('buttonStyle').value || DEFAULTS.buttonStyle;
+    const gridColumns = document.getElementById('gridColumns').value || DEFAULTS.gridColumns;
+
+    // Announcement banner settings
+    const bannerEnabled = document.getElementById('bannerEnabled').checked;
+    const bannerTitle = document.getElementById('bannerTitle').value.trim();
+    const bannerMessage = document.getElementById('bannerMessage').value.trim();
+    const bannerStyle = document.getElementById('bannerStyle').value || DEFAULTS.bannerStyle;
+    const bannerColors = BANNER_STYLES[bannerStyle] || BANNER_STYLES.info;
+
     const colors = getActiveColors();
     const autoRefreshValid = autoRefreshUrl && isValidUrl(autoRefreshUrl);
     const shouldAutoRefresh = enableAutoRefresh && autoRefreshValid;
@@ -1844,7 +1893,7 @@ function generateHTML(useComputerNameVariable = false) {
                             ? (link.shortcutPath ? encodeURI(link.shortcutPath) : './' + encodeURIComponent(link.shortcutName || link.name + '.lnk'))
                             : escapeHtml(link.url);
                         const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
-                        return `<li><a href="${href}" class="link-button">${iconHtml}${escapeHtml(link.name)}</a></li>`;
+                        return `<li><a href="${href}" class="link-button style-${buttonStyle}">${iconHtml}${escapeHtml(link.name)}</a></li>`;
                     }).join('')}
                 </ul>
             </section>`;
@@ -1861,7 +1910,7 @@ function generateHTML(useComputerNameVariable = false) {
                         ? (link.shortcutPath ? encodeURI(link.shortcutPath) : './' + encodeURIComponent(link.shortcutName || link.name + '.lnk'))
                         : escapeHtml(link.url);
                     const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
-                    return `<a href="${href}" class="link-button standalone">${iconHtml}${escapeHtml(link.name)}</a>`;
+                    return `<a href="${href}" class="link-button standalone style-${buttonStyle}">${iconHtml}${escapeHtml(link.name)}</a>`;
                 }).join('')}
             </div>`;
     }
@@ -2383,6 +2432,124 @@ function generateHTML(useComputerNameVariable = false) {
                 font-size: 2rem;
             }
         }
+
+        /* Layout variations */
+        .links-container.layout-list {
+            flex-direction: column;
+            max-width: 800px;
+        }
+
+        .links-container.layout-list .link-group {
+            flex: 1 1 100%;
+            max-width: none;
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .links-container.layout-list .group-heading-row {
+            border-bottom-color: var(--heading-color);
+        }
+
+        .links-container.layout-list .links-list {
+            gap: 0.5rem;
+        }
+
+        .links-container.layout-list .link-button {
+            justify-content: flex-start;
+            padding: 0.875rem 1.25rem;
+        }
+
+        .links-container.layout-grid {
+            display: grid;
+            grid-template-columns: repeat(${gridColumns}, 1fr);
+            gap: 1rem;
+            max-width: 1200px;
+        }
+
+        .links-container.layout-grid .link-group {
+            display: contents;
+        }
+
+        .links-container.layout-grid .group-heading-row {
+            grid-column: 1 / -1;
+            margin-top: 1rem;
+            background: transparent;
+        }
+
+        .links-container.layout-grid .links-list {
+            display: contents;
+        }
+
+        .links-container.layout-grid .links-list li {
+            display: block;
+        }
+
+        .links-container.layout-grid .standalone-links {
+            grid-column: 1 / -1;
+            display: contents;
+        }
+
+        /* Button style variations */
+        .link-button.style-square {
+            border-radius: 0;
+        }
+
+        .link-button.style-textonly {
+            background-color: transparent;
+            border-color: transparent;
+            color: var(--body-text);
+            text-decoration: underline;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .link-button.style-textonly:hover,
+        .link-button.style-textonly:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: var(--body-text);
+            text-decoration: none;
+            box-shadow: none;
+        }
+
+        /* Announcement banner */
+        .announcement-banner {
+            width: 100%;
+            max-width: 1400px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+            text-align: left;
+        }
+
+        .announcement-banner.banner-info {
+            background-color: ${bannerColors.bg};
+            border-color: ${bannerColors.border};
+            color: ${bannerColors.text};
+        }
+
+        .announcement-banner.banner-warning {
+            background-color: ${BANNER_STYLES.warning.bg};
+            border-color: ${BANNER_STYLES.warning.border};
+            color: ${BANNER_STYLES.warning.text};
+        }
+
+        .announcement-banner.banner-urgent {
+            background-color: ${BANNER_STYLES.urgent.bg};
+            border-color: ${BANNER_STYLES.urgent.border};
+            color: ${BANNER_STYLES.urgent.text};
+        }
+
+        .banner-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .banner-message {
+            font-size: 0.9375rem;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -2404,9 +2571,15 @@ ${showDateTime && dateTimePosition !== 'footer' ? `
 ` : ''}
 ${cornerLogoHTML}
     <main id="main-content" role="main">
+        ${bannerEnabled && bannerMessage ? `
+        <div class="announcement-banner banner-${bannerStyle}" role="alert">
+            ${bannerTitle ? `<div class="banner-title">${escapeHtml(bannerTitle)}</div>` : ''}
+            <div class="banner-message">${escapeHtml(bannerMessage)}</div>
+        </div>` : ''}
+
         ${welcomeHeader}
 
-        <nav class="links-container" aria-label="Quick links">
+        <nav class="links-container layout-${linkLayout}" aria-label="Quick links">
 ${linksHTML}
         </nav>
     </main>
@@ -2526,6 +2699,14 @@ function updatePreview() {
     // Toggle auto-refresh options visibility
     const enableAutoRefresh = document.getElementById('enableAutoRefresh').checked;
     document.getElementById('autoRefreshOptionsGroup').style.display = enableAutoRefresh ? 'block' : 'none';
+
+    // Toggle announcement banner options visibility
+    const bannerEnabled = document.getElementById('bannerEnabled').checked;
+    document.getElementById('bannerOptionsGroup').style.display = bannerEnabled ? 'block' : 'none';
+
+    // Toggle grid columns visibility
+    const linkLayout = document.getElementById('linkLayout').value;
+    document.getElementById('gridColumnsGroup').style.display = linkLayout === 'grid' ? 'block' : 'none';
 
     // Save state to localStorage
     saveState();
@@ -3022,6 +3203,17 @@ function applyImportedConfig(config) {
         document.getElementById('enableAutoRefresh').checked = config.settings.enableAutoRefresh || false;
         document.getElementById('autoRefreshDelay').value = config.settings.autoRefreshDelay || '30';
         document.getElementById('autoRefreshUrl').value = config.settings.autoRefreshUrl || '';
+
+        // Link layout options
+        document.getElementById('linkLayout').value = config.settings.linkLayout || DEFAULTS.linkLayout;
+        document.getElementById('buttonStyle').value = config.settings.buttonStyle || DEFAULTS.buttonStyle;
+        document.getElementById('gridColumns').value = config.settings.gridColumns || DEFAULTS.gridColumns;
+
+        // Announcement banner
+        document.getElementById('bannerEnabled').checked = config.settings.bannerEnabled || false;
+        document.getElementById('bannerTitle').value = config.settings.bannerTitle || '';
+        document.getElementById('bannerMessage').value = config.settings.bannerMessage || '';
+        document.getElementById('bannerStyle').value = config.settings.bannerStyle || DEFAULTS.bannerStyle;
     }
 
     // Apply theme
@@ -3162,6 +3354,17 @@ function resetAll() {
     document.getElementById('autoRefreshUrl').value = '';
     document.getElementById('scriptName').value = DEFAULTS.scriptName;
     document.getElementById('destinationPath').value = DEFAULTS.destinationPath;
+
+    // Reset link layout settings
+    document.getElementById('linkLayout').value = DEFAULTS.linkLayout;
+    document.getElementById('buttonStyle').value = DEFAULTS.buttonStyle;
+    document.getElementById('gridColumns').value = DEFAULTS.gridColumns;
+
+    // Reset announcement banner settings
+    document.getElementById('bannerEnabled').checked = false;
+    document.getElementById('bannerTitle').value = '';
+    document.getElementById('bannerMessage').value = '';
+    document.getElementById('bannerStyle').value = DEFAULTS.bannerStyle;
 
     // Reset custom color inputs
     document.getElementById('customPrimary').value = DEFAULTS.customColors.primary;

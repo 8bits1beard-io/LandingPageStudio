@@ -341,6 +341,64 @@
                             </div>
                         </div>
                     </div>
+
+                    <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+                    <!-- ANNOUNCEMENT BANNER SECTION -->
+                    <div class="section-label">Announcement Banner</div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="bannerEnabled" onchange="updatePreview()">
+                            <label for="bannerEnabled">Show announcement banner</label>
+                        </div>
+                    </div>
+                    <div id="bannerOptionsGroup" style="display: none;">
+                        <div class="form-group">
+                            <label for="bannerTitle">Title <small>(optional)</small></label>
+                            <input type="text" id="bannerTitle" value="" placeholder="Important Notice" oninput="debouncedUpdatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label for="bannerMessage">Message</label>
+                            <input type="text" id="bannerMessage" value="" placeholder="Enter your announcement message..." oninput="debouncedUpdatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label for="bannerStyle">Style</label>
+                            <select id="bannerStyle" onchange="updatePreview()">
+                                <option value="info" selected>Info (blue)</option>
+                                <option value="warning">Warning (yellow)</option>
+                                <option value="urgent">Urgent (red)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+                    <!-- LINK LAYOUT SECTION -->
+                    <div class="section-label">Link Layout</div>
+                    <div class="form-group">
+                        <label for="linkLayout">Layout Style</label>
+                        <select id="linkLayout" onchange="updatePreview()">
+                            <option value="cards" selected>Cards</option>
+                            <option value="list">List</option>
+                            <option value="grid">Grid</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="gridColumnsGroup" style="display: none;">
+                        <label for="gridColumns">Grid Columns</label>
+                        <select id="gridColumns" onchange="updatePreview()">
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="buttonStyle">Button Style</label>
+                        <select id="buttonStyle" onchange="updatePreview()">
+                            <option value="rounded" selected>Rounded</option>
+                            <option value="square">Square</option>
+                            <option value="textonly">Text only</option>
+                        </select>
+                    </div>
                 </fieldset>
                 </div>
 
