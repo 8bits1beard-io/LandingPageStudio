@@ -1531,7 +1531,7 @@ function generateHTML(useComputerNameVariable = false) {
                 <ul class="links-list">
                     ${validLinks.map(link => {
                         const href = link.type === 'app'
-                            ? (link.shortcutPath ? escapeHtml(link.shortcutPath) : './' + escapeHtml(link.shortcutName || link.name + '.lnk'))
+                            ? (link.shortcutPath ? encodeURI(link.shortcutPath) : './' + encodeURIComponent(link.shortcutName || link.name + '.lnk'))
                             : escapeHtml(link.url);
                         const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
                         return `<li><a href="${href}" class="link-button">${iconHtml}${escapeHtml(link.name)}</a></li>`;
@@ -1548,7 +1548,7 @@ function generateHTML(useComputerNameVariable = false) {
             <div class="standalone-links">
                 ${validUngrouped.map(link => {
                     const href = link.type === 'app'
-                        ? (link.shortcutPath ? escapeHtml(link.shortcutPath) : './' + escapeHtml(link.shortcutName || link.name + '.lnk'))
+                        ? (link.shortcutPath ? encodeURI(link.shortcutPath) : './' + encodeURIComponent(link.shortcutName || link.name + '.lnk'))
                         : escapeHtml(link.url);
                     const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
                     return `<a href="${href}" class="link-button standalone">${iconHtml}${escapeHtml(link.name)}</a>`;
