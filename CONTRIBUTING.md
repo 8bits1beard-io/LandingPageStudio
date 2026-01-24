@@ -60,11 +60,21 @@ Ensure WCAG AA contrast compliance.
 Add to appropriate category in `ICON_LIBRARY`:
 
 ```javascript
-ICON_LIBRARY.categoryName.push({
+ICON_LIBRARY.categoryName.icons.push({
     name: 'Icon Name',
     svg: '<svg viewBox="0 0 24 24">...</svg>'
 });
 ```
+
+## PowerShell Script Features
+
+The generated PowerShell deployment script includes several dynamic features:
+
+### FQDN Identifier
+
+The network identifier feature uses `nslookup` in PowerShell to reliably determine the machine's Fully Qualified Domain Name (FQDN). This is used for:
+- Displaying the FQDN on the landing page
+- Extracting site codes from DNS names via regex pattern matching
 
 ## Testing
 

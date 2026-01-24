@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Landing Page Studio is a WYSIWYG visual editor for creating branded kiosk landing pages. It generates standalone HTML files or PowerShell deployment scripts for Windows enterprise environments (Intune/SCCM).
+Landing Page Studio (v1.4.0) is a WYSIWYG visual editor for creating branded kiosk landing pages. It generates standalone HTML files or PowerShell deployment scripts for Windows enterprise environments (Intune/SCCM).
 
 **Tech stack:** Vanilla JavaScript (ES6+), HTML5, CSS3 with custom properties. No build system, bundler, or package manager.
 
@@ -34,7 +34,7 @@ let colorOverrides = {};   // Advanced color customizations
 ```
 
 ### Key Constants
-- `DEFAULTS` - Default configuration values (layout, colors, banner, popup settings)
+- `DEFAULTS` - Default configuration values (layout, colors, banner, button size, computer name format)
 - `BANNER_STYLES` - Announcement banner color schemes (info, warning, urgent)
 - `TEMPLATES` - Quick-start presets (customerFacing, employeeKiosk)
 - `ICON_LIBRARY` - Built-in SVG icons organized by category (ui, microsoft, browsers, tools)
@@ -58,6 +58,12 @@ Multi-level system supporting:
 - Cross-container moves (group ↔ standalone)
 
 State tracked via: `draggedGroupId`, `draggedLinkId`, `draggedLinkGroupId`, `draggedUngroupedId`
+
+### FQDN Identifier Feature
+Uses `nslookup` for reverse DNS lookup to determine fully qualified domain name. Supports:
+- Computer name format option: `hostname` or `fqdn`
+- Network identifier display modes with regex pattern matching
+- Position options include `below-greeting` for centered display under greeting text
 
 ## Adding Features
 

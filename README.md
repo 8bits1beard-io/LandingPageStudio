@@ -1,5 +1,6 @@
 # Landing Page Studio
 
+**Version:** 1.4.0
 **Author:** Joshua Walderbach
 
 > Design branded landing pages for kiosks and curated user experiences. Visual editor with live preview and enterprise deployment.
@@ -17,8 +18,10 @@
 - **Icon Library** - 40+ built-in SVG icons for groups and links
 - **Link Layouts** - Cards, List, or Grid display with configurable columns
 - **Button Styles** - Rounded, Square, or Text-only link buttons
+- **Button Sizes** - Small, Medium, or Large button sizing
 - **Announcement Banner** - Optional banner with Info/Warning/Urgent styles
-- **Popup Windows** - Open links in popup windows for kiosk navigation
+- **Computer Name Display** - Show hostname or FQDN with flexible positioning (top-right, footer, or below greeting)
+- **FQDN Identifier** - Extract site/region from device FQDN via nslookup
 - **Drag-and-Drop** - Reorder groups and links by dragging
 - **Quick Start Templates** - Load ready-made kiosk layouts
 - **Auto-Redirect** - Optionally redirect to another page after a delay
@@ -44,14 +47,15 @@
 | Greeting | Main heading (e.g., "Welcome") |
 | Main Logo | Logo displayed above the greeting (upload SVG or enter URL) |
 | Small Logo | Secondary logo with flexible positioning (corner or beside greeting) |
-| Computer Name | Toggle display and position |
+| Computer Name | Toggle display with format (hostname or FQDN) and position (top-right, footer, or below greeting) |
+| FQDN Identifier | Extract site/region from device FQDN via nslookup with configurable position |
 | Date/Time | Optional live clock (ISO 8601) |
 | Footer | Optional footer text |
 | Auto-Redirect | Redirect to another URL after specified seconds |
 | Announcement Banner | Optional banner with title, message, and style (Info/Warning/Urgent) |
 | Link Layout | Cards (default), List, or Grid display |
 | Button Style | Rounded (default), Square, or Text-only |
-| Popup Windows | Open links in popup window instead of navigating away |
+| Button Size | Small, Medium (default), or Large |
 | Script Name | Name used in the PowerShell script filename |
 | Destination Path | Where the landing page saves on target machines |
 
