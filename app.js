@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.3.1';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -14,7 +14,7 @@ const DEFAULTS = {
     computerNameFormat: 'hostname',
     networkIdentifierPosition: 'top-left',
     networkIdentifierDisplay: 'site',
-    networkIdentifierPattern: '.*s0(\\d{4})\\.(\\w+)\\..*',
+    networkIdentifierPattern: '.*s0(\\d+)\\.(\\w+)\\..*',
     networkIdentifierFallback: 'Unknown',
     dateTimeFormat: 'both',
     dateTimePosition: 'top-left',
@@ -2718,7 +2718,19 @@ if ($Uninstall) {
     $networkPattern = '${networkIdentifierPattern.replace(/'/g, "''")}'
     $networkMode = '${networkIdentifierDisplay.replace(/'/g, "''")}'
     try {
-        $dnsName = [System.Net.Dns]::GetHostEntry($env:COMPUTERNAME).HostName
+        # Get FQDN via reverse DNS lookup (more reliable than forward lookup)
+        $ipAddresses = [System.Net.Dns]::GetHostAddresses($env:COMPUTERNAME) | Where-Object { $_.AddressFamily -eq 'InterNetwork' }
+        $dnsName = $null
+        foreach ($ip in $ipAddresses) {
+            try {
+                $dnsName = [System.Net.Dns]::GetHostEntry($ip).HostName
+                if ($dnsName -and $dnsName -ne $env:COMPUTERNAME) { break }
+            } catch { }
+        }
+        # Fallback to forward lookup if reverse lookup fails
+        if (-not $dnsName -or $dnsName -eq $env:COMPUTERNAME) {
+            $dnsName = [System.Net.Dns]::GetHostEntry($env:COMPUTERNAME).HostName
+        }
         if ($computerNameFormat -eq 'fqdn') {
             $computerName = $dnsName
         }
