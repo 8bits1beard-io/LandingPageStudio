@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.3.2';
+const APP_VERSION = '1.4.0';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -2029,6 +2029,20 @@ function generateHTML(useComputerNameVariable = false) {
             left: 1rem;
         }
 
+        .computer-name.below-greeting,
+        .network-identifier.below-greeting {
+            position: static;
+            display: inline-block;
+            margin: 0.5rem auto 1rem;
+            text-align: center;
+        }
+
+        .below-greeting-container {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
         .network-identifier {
             position: fixed;
             background-color: var(--white);
@@ -2477,12 +2491,12 @@ function generateHTML(useComputerNameVariable = false) {
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
-${showComputerName ? `
+${showComputerName && computerNamePosition !== 'below-greeting' ? `
     <div class="computer-name ${computerNamePosition}" role="status" aria-label="Computer name: ${computerNameDisplay}">
         ${computerNameDisplay}
     </div>
 ` : ''}
-${showNetworkIdentifier && networkIdentifierPosition !== 'footer' ? `
+${showNetworkIdentifier && networkIdentifierPosition !== 'footer' && networkIdentifierPosition !== 'below-greeting' ? `
     <div class="network-identifier ${networkIdentifierPosition}" role="status" aria-label="Network identifier: ${networkDisplayValue}">
         ${networkDisplayValue}
     </div>
@@ -2501,6 +2515,15 @@ ${cornerLogoHTML}
         </div>` : ''}
 
         ${welcomeHeader}
+${(showComputerName && computerNamePosition === 'below-greeting') || (showNetworkIdentifier && networkIdentifierPosition === 'below-greeting') ? `
+        <div class="below-greeting-container">
+${showComputerName && computerNamePosition === 'below-greeting' ? `            <div class="computer-name below-greeting" role="status" aria-label="Computer name: ${computerNameDisplay}">
+                ${computerNameDisplay}
+            </div>
+` : ''}${showNetworkIdentifier && networkIdentifierPosition === 'below-greeting' ? `            <div class="network-identifier below-greeting" role="status" aria-label="Network identifier: ${networkDisplayValue}">
+                ${networkDisplayValue}
+            </div>
+` : ''}        </div>` : ''}
 
         <nav class="links-container layout-${linkLayout}" aria-label="Quick links">
 ${linksHTML}

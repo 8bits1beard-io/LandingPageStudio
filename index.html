@@ -224,6 +224,7 @@
                             <option value="top-right" selected>Top Right</option>
                             <option value="top-center">Top Center</option>
                             <option value="top-left">Top Left</option>
+                            <option value="below-greeting">Below Greeting</option>
                             <option value="bottom-right">Bottom Right</option>
                             <option value="bottom-center">Bottom Center</option>
                             <option value="bottom-left">Bottom Left</option>
@@ -242,10 +243,10 @@
                     <div class="form-group">
                         <div class="checkbox-group">
                             <input type="checkbox" id="showNetworkIdentifier" onchange="validatePositions(); updatePreview(); updateDateTimePositionOptions();">
-                            <label for="showNetworkIdentifier">Show device identifier from network name</label>
+                            <label for="showNetworkIdentifier">Show identifier from FQDN</label>
                         </div>
                         <p style="color: var(--text-secondary); font-size: 0.75rem; margin: 0.35rem 0 0;">
-                            Extract a portion of the device's DNS name (FQDN). Useful for site or region IDs.
+                            Extract a portion of the device's fully qualified domain name (FQDN).
                         </p>
                     </div>
 
@@ -277,6 +278,7 @@
                             <option value="top-left" selected>Top Left</option>
                             <option value="top-center">Top Center</option>
                             <option value="top-right">Top Right</option>
+                            <option value="below-greeting">Below Greeting</option>
                             <option value="bottom-right">Bottom Right</option>
                             <option value="bottom-center">Bottom Center</option>
                             <option value="bottom-left">Bottom Left</option>
