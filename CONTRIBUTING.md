@@ -1,4 +1,4 @@
-# Contributing to Landing Page Studio
+# Contributing to PortalMaker
 
 ## Development Setup
 
@@ -73,7 +73,7 @@ The generated PowerShell deployment script includes several dynamic features:
 ### FQDN Identifier
 
 The network identifier feature uses `nslookup` in PowerShell to reliably determine the machine's Fully Qualified Domain Name (FQDN). This is used for:
-- Displaying the FQDN on the landing page
+- Displaying the FQDN on the portal
 - Extracting site codes from DNS names via regex pattern matching
 
 ## Testing

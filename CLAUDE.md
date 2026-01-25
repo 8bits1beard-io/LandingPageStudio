@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Landing Page Studio (v1.4.0) is a WYSIWYG visual editor for creating branded kiosk landing pages. It generates standalone HTML files or PowerShell deployment scripts for Windows enterprise environments (Intune/SCCM).
+PortalMaker (v1.4.0) is a WYSIWYG visual editor for creating branded kiosk portal pages. It generates standalone HTML files or PowerShell deployment scripts for Windows enterprise environments (Intune/SCCM).
 
 **Tech stack:** Vanilla JavaScript (ES6+), HTML5, CSS3 with custom properties. No build system, bundler, or package manager.
 
@@ -12,12 +12,10 @@ Landing Page Studio (v1.4.0) is a WYSIWYG visual editor for creating branded kio
 
 Open `index.html` directly in a browser. No build step required.
 
-**Hosted version:** https://landingpage-studio.pages.dev
-
 ## Architecture
 
 ### Files
-- **index.html** - UI structure with 4-tab interface (Layout, Colors, Links, Export)
+- **index.html** - UI structure with 5-tab interface (Links, Style, Page, Extras, Export)
 - **app.js** - Core logic, state management, HTML/PowerShell generation (~3300 lines)
 - **styles.css** - Responsive styling with CSS variables, accessibility support
 

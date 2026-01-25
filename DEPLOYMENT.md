@@ -1,10 +1,10 @@
 # Enterprise Deployment Guide
 
-This guide covers deploying Landing Page Studio-generated pages to Windows devices using enterprise management tools.
+This guide covers deploying PortalMaker-generated pages to Windows devices using enterprise management tools.
 
 ## PowerShell Script Deployment
 
-The generated PowerShell script (`Generate-LandingPage_[ScriptName].ps1`) handles:
+The generated PowerShell script (`Generate-Portal_[ScriptName].ps1`) handles:
 
 - Creating the destination folder
 - Writing the HTML file
@@ -14,11 +14,11 @@ The generated PowerShell script (`Generate-LandingPage_[ScriptName].ps1`) handle
 
 | Parameter | Description |
 |-----------|-------------|
-| `-Uninstall` | Remove the landing page |
+| `-Uninstall` | Remove the portal |
 
 ### Intune Deployment
 
-1. **Download** the PowerShell script from Landing Page Studio
+1. **Download** the PowerShell script from PortalMaker
 2. In **Intune Admin Center**, go to **Devices > Scripts**
 3. Click **Add > Windows 10 and later**
 4. Upload the `.ps1` file
@@ -34,23 +34,23 @@ For more control (detection rules, dependencies, uninstall):
 
 1. **Package** the script using the [Microsoft Win32 Content Prep Tool](https://github.com/Microsoft/Microsoft-Win32-Content-Prep-Tool):
    ```cmd
-   IntuneWinAppUtil.exe -c <source_folder> -s Generate-LandingPage_MyScript.ps1 -o <output_folder>
+   IntuneWinAppUtil.exe -c <source_folder> -s Generate-Portal_MyScript.ps1 -o <output_folder>
    ```
 
 2. In **Intune Admin Center**, go to **Apps > Windows**
 3. Click **Add** and select **Windows app (Win32)**
 4. Upload the `.intunewin` file
 5. Configure:
-   - **Install command**: `powershell.exe -ExecutionPolicy Bypass -File Generate-LandingPage_MyScript.ps1`
-   - **Uninstall command**: `powershell.exe -ExecutionPolicy Bypass -File Generate-LandingPage_MyScript.ps1 -Uninstall`
-   - **Detection rule**: File exists at destination path (e.g., `C:\ProgramData\LandingPage\index.html`)
+   - **Install command**: `powershell.exe -ExecutionPolicy Bypass -File Generate-Portal_MyScript.ps1`
+   - **Uninstall command**: `powershell.exe -ExecutionPolicy Bypass -File Generate-Portal_MyScript.ps1 -Uninstall`
+   - **Detection rule**: File exists at destination path (e.g., `C:\ProgramData\PortalMaker\index.html`)
 
 ### SCCM/ConfigMgr Deployment
 
 1. Create a **Package** with the PowerShell script as source
 2. Create a **Program** with command line:
    ```
-   powershell.exe -ExecutionPolicy Bypass -File Generate-LandingPage_MyScript.ps1
+   powershell.exe -ExecutionPolicy Bypass -File Generate-Portal_MyScript.ps1
    ```
 3. Deploy to target collection
 
@@ -58,15 +58,15 @@ For more control (detection rules, dependencies, uninstall):
 
 ### Microsoft Edge Kiosk Mode
 
-Set Edge to open the landing page in kiosk mode:
+Set Edge to open the portal in kiosk mode:
 
 ```
-msedge.exe --kiosk "C:\ProgramData\LandingPage\index.html" --edge-kiosk-type=fullscreen
+msedge.exe --kiosk "C:\ProgramData\PortalMaker\index.html" --edge-kiosk-type=fullscreen
 ```
 
 For public browsing mode (with navigation):
 ```
-msedge.exe --kiosk "C:\ProgramData\LandingPage\index.html" --edge-kiosk-type=public-browsing
+msedge.exe --kiosk "C:\ProgramData\PortalMaker\index.html" --edge-kiosk-type=public-browsing
 ```
 
 ### Edge Kiosk Idle Timeout
@@ -75,7 +75,7 @@ Configure Edge to reset after a period of inactivity (useful for public kiosks):
 
 **Via command line flag:**
 ```
-msedge.exe --kiosk "C:\ProgramData\LandingPage\index.html" --edge-kiosk-type=public-browsing --kiosk-idle-timeout-minutes=5
+msedge.exe --kiosk "C:\ProgramData\PortalMaker\index.html" --edge-kiosk-type=public-browsing --kiosk-idle-timeout-minutes=5
 ```
 
 **Via Intune Settings Catalog:**
@@ -90,22 +90,22 @@ msedge.exe --kiosk "C:\ProgramData\LandingPage\index.html" --edge-kiosk-type=pub
 1. Open **Settings > Accounts > Other users**
 2. Click **Set up a kiosk**
 3. Select **Microsoft Edge** as the kiosk app
-4. Set the landing page URL as the default page
+4. Set the portal URL as the default page
 
 ### Multi-App Kiosk (Windows Configuration Designer)
 
 Create a provisioning package with:
 - Allowed apps including Edge
-- Start layout with Edge tile pointing to the landing page
+- Start layout with Edge tile pointing to the portal
 - Shell launcher configuration
 
 ## File Locations
 
 | Path | Purpose |
 |------|---------|
-| `C:\ProgramData\LandingPage\` | Default installation folder |
-| `C:\ProgramData\LandingPage\index.html` | Landing page HTML |
-| `C:\ProgramData\LandingPage\Logs\` | Installation logs |
+| `C:\ProgramData\PortalMaker\` | Default installation folder |
+| `C:\ProgramData\PortalMaker\index.html` | Portal HTML |
+| `C:\ProgramData\PortalMaker\Logs\` | Installation logs |
 
 ## Troubleshooting
 

@@ -3,75 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Landing Page Studio - Design branded landing pages for kiosks and curated user experiences. Visual editor with live preview and enterprise deployment.">
-    <title>Landing Page Studio</title>
+    <meta name="description" content="PortalMaker - Design branded portal pages for kiosks and curated user experiences. Visual editor with live preview and enterprise deployment.">
+    <title>PortalMaker</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <header role="banner">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100" role="img" aria-label="Landing Page Studio logo">
-          <defs>
-            <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#6366f1"/>
-              <stop offset="100%" style="stop-color:#8b5cf6"/>
-            </linearGradient>
-            <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color:#f472b6"/>
-              <stop offset="100%" style="stop-color:#c084fc"/>
-            </linearGradient>
-          </defs>
-
-          <!-- Icon: Browser window with design cursor -->
-          <g transform="translate(10, 10)">
-            <!-- Browser frame -->
-            <rect x="0" y="0" width="70" height="55" rx="6" ry="6" fill="url(#brandGradient)"/>
-
-            <!-- Browser header bar -->
-            <rect x="0" y="0" width="70" height="14" rx="6" ry="6" fill="url(#brandGradient)"/>
-            <rect x="0" y="8" width="70" height="6" fill="url(#brandGradient)"/>
-
-            <!-- Browser dots -->
-            <circle cx="10" cy="7" r="2.5" fill="#fff" opacity="0.9"/>
-            <circle cx="18" cy="7" r="2.5" fill="#fff" opacity="0.7"/>
-            <circle cx="26" cy="7" r="2.5" fill="#fff" opacity="0.5"/>
-
-            <!-- Content area -->
-            <rect x="5" y="18" width="60" height="32" rx="2" fill="#fff"/>
-
-            <!-- Landing page elements inside -->
-            <rect x="9" y="22" width="24" height="4" rx="1" fill="#e0e7ff"/>
-            <rect x="9" y="29" width="52" height="2" rx="1" fill="#c7d2fe"/>
-            <rect x="9" y="33" width="45" height="2" rx="1" fill="#c7d2fe"/>
-            <rect x="9" y="37" width="38" height="2" rx="1" fill="#c7d2fe"/>
-            <rect x="9" y="43" width="16" height="5" rx="2" fill="url(#accentGradient)"/>
-
-            <!-- Design cursor -->
-            <g transform="translate(48, 35)">
-              <path d="M0 0 L0 16 L4.5 12 L8 19 L11 17.5 L7.5 11 L13 11 Z" fill="#1e1b4b" stroke="#fff" stroke-width="1.5"/>
-            </g>
-          </g>
-
-          <!-- Decorative blocks suggesting drag-and-drop -->
-          <g transform="translate(58, 68)" opacity="0.6">
-            <rect x="0" y="0" width="8" height="8" rx="1.5" fill="#8b5cf6" transform="rotate(-12)"/>
-            <rect x="10" y="2" width="6" height="6" rx="1" fill="#f472b6" transform="rotate(8)"/>
-          </g>
-
-          <!-- Text: Landing Page Studio -->
-          <g transform="translate(95, 0)">
-            <!-- "Landing Page" -->
-            <text x="0" y="42" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="700" fill="#1e1b4b">
-              Landing Page
-            </text>
-            <!-- "Studio" with gradient -->
-            <text x="0" y="72" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="28" font-weight="700" fill="url(#brandGradient)">
-              Studio
-            </text>
-          </g>
-        </svg>
-        <h1 class="visually-hidden">Landing Page Studio</h1>
+        <div class="header-brand">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-hidden="true">
+                <defs>
+                    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#2563eb"/>
+                        <stop offset="100%" style="stop-color:#3b82f6"/>
+                    </linearGradient>
+                </defs>
+                <rect x="2" y="2" width="28" height="28" rx="5" fill="url(#headerGradient)"/>
+                <rect x="2" y="2" width="28" height="8" rx="5" fill="url(#headerGradient)"/>
+                <rect x="2" y="6" width="28" height="4" fill="url(#headerGradient)"/>
+                <circle cx="7" cy="6" r="1.5" fill="#fff" opacity="0.9"/>
+                <circle cx="11" cy="6" r="1.5" fill="#fff" opacity="0.7"/>
+                <circle cx="15" cy="6" r="1.5" fill="#fff" opacity="0.5"/>
+                <rect x="5" y="12" width="22" height="15" rx="2" fill="#fff"/>
+                <rect x="8" y="15" width="10" height="2" rx="1" fill="#bfdbfe"/>
+                <rect x="8" y="19" width="16" height="1.5" rx="0.75" fill="#dbeafe"/>
+                <rect x="8" y="22" width="12" height="1.5" rx="0.75" fill="#dbeafe"/>
+            </svg>
+            <h1>PortalMaker</h1>
+        </div>
         <div class="header-actions">
             <span id="saveIndicator" class="save-indicator" aria-live="polite"></span>
             <label for="importFileHeader" class="btn btn-secondary btn-sm header-btn" style="cursor: pointer;">
@@ -90,29 +50,166 @@
             <div class="panel-body editor-scroll">
                 <!-- Tab Navigation -->
                 <nav class="step-nav" role="tablist">
-                    <button type="button" class="step-btn active" role="tab" aria-selected="true" aria-controls="tab-page" tabindex="0" onclick="switchTab('page')" onkeydown="handleTabKeydown(event)">
+                    <button type="button" class="step-btn active" role="tab" aria-selected="true" aria-controls="tab-links" tabindex="0" onclick="switchTab('links')" onkeydown="handleTabKeydown(event)">
                         <span class="step-number">1</span>
-                        <span class="step-label">Layout</span>
-                    </button>
-                    <span class="step-arrow" aria-hidden="true">→</span>
-                    <button type="button" class="step-btn" role="tab" aria-selected="false" aria-controls="tab-theme" tabindex="-1" onclick="switchTab('theme')" onkeydown="handleTabKeydown(event)">
-                        <span class="step-number">2</span>
-                        <span class="step-label">Colors</span>
-                    </button>
-                    <span class="step-arrow" aria-hidden="true">→</span>
-                    <button type="button" class="step-btn" role="tab" aria-selected="false" aria-controls="tab-links" tabindex="-1" onclick="switchTab('links')" onkeydown="handleTabKeydown(event)">
-                        <span class="step-number">3</span>
                         <span class="step-label">Links</span>
                     </button>
                     <span class="step-arrow" aria-hidden="true">→</span>
-                    <button type="button" class="step-btn" role="tab" aria-selected="false" aria-controls="tab-export" tabindex="-1" onclick="switchTab('export')" onkeydown="handleTabKeydown(event)">
+                    <button type="button" class="step-btn" role="tab" aria-selected="false" aria-controls="tab-style" tabindex="-1" onclick="switchTab('style')" onkeydown="handleTabKeydown(event)">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Style</span>
+                    </button>
+                    <span class="step-arrow" aria-hidden="true">→</span>
+                    <button type="button" class="step-btn" role="tab" aria-selected="false" aria-controls="tab-page" tabindex="-1" onclick="switchTab('page')" onkeydown="handleTabKeydown(event)">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Page</span>
+                    </button>
+                    <span class="step-arrow" aria-hidden="true">→</span>
+                    <button type="button" class="step-btn" role="tab" aria-selected="false" aria-controls="tab-extras" tabindex="-1" onclick="switchTab('extras')" onkeydown="handleTabKeydown(event)">
                         <span class="step-number">4</span>
+                        <span class="step-label">Extras</span>
+                    </button>
+                    <span class="step-arrow" aria-hidden="true">→</span>
+                    <button type="button" class="step-btn" role="tab" aria-selected="false" aria-controls="tab-export" tabindex="-1" onclick="switchTab('export')" onkeydown="handleTabKeydown(event)">
+                        <span class="step-number">5</span>
                         <span class="step-label">Export</span>
                     </button>
                 </nav>
 
+                <!-- Links Tab -->
+                <div id="tab-links" class="tab-panel active" role="tabpanel">
+                <!-- Link Groups -->
+                <section aria-labelledby="groups-heading">
+                    <h3 id="groups-heading" style="color: var(--primary); margin-bottom: 0.5rem;">Link Groups</h3>
+                    <p id="groups-description" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+                        Organize links into groups with headings.
+                    </p>
+                    <p style="color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 1.25rem;">
+                        Note: App shortcuts (.lnk) are Windows-only. Use web links for macOS/Linux.
+                    </p>
+
+                    <div id="groupsContainer" class="groups-container" role="region" aria-labelledby="groups-heading" aria-describedby="groups-description" aria-live="polite">
+                        <!-- Groups will be added here dynamically -->
+                    </div>
+
+                    <div class="actions-bar">
+                        <button type="button" class="btn btn-primary" onclick="addGroup()" aria-describedby="groups-description">
+                            + Add Group
+                        </button>
+                    </div>
+                </section>
+
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+                <!-- Standalone Links -->
+                <section aria-labelledby="ungrouped-heading">
+                    <div class="section-header" id="ungrouped-links-header" onclick="toggleSection('ungrouped-links')" aria-expanded="true" aria-controls="ungrouped-links-content" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSection('ungrouped-links')}">
+                        <h3 id="ungrouped-heading" style="color: var(--primary); cursor: pointer;">
+                            <span class="collapse-icon">&#9660;</span> Standalone Links
+                        </h3>
+                    </div>
+                    <div class="section-content" id="ungrouped-links-content">
+                    <p id="ungrouped-description" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+                        Links here appear without a group heading.
+                    </p>
+
+                    <div id="ungroupedLinksContainer" role="region" aria-labelledby="ungrouped-heading" aria-live="polite">
+                        <!-- Ungrouped links will be added here -->
+                    </div>
+
+                    <div class="actions-bar">
+                        <button type="button" class="btn btn-secondary" onclick="addUngroupedLink()" aria-describedby="ungrouped-description">
+                            + Add Link
+                        </button>
+                    </div>
+                    </div>
+                </section>
+                </div>
+
+                <!-- Style Tab -->
+                <div id="tab-style" class="tab-panel" role="tabpanel">
+                <section aria-labelledby="theme-heading">
+                    <p id="theme-description" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+                        Choose a color theme for your portal page.
+                    </p>
+
+                    <div class="theme-swatches" role="radiogroup" aria-labelledby="theme-heading" id="themeSwatches">
+                        <!-- Swatches will be rendered by JavaScript -->
+                    </div>
+
+                    <div id="customColors" class="custom-colors">
+                        <div class="color-input-group">
+                            <label for="customPrimary">Primary Color</label>
+                            <div class="color-input-row">
+                                <input type="color" id="customPrimaryPicker" value="#0053E2" onchange="syncColorInput('primary', this.value)">
+                                <input type="text" id="customPrimary" value="#0053E2" placeholder="#000000" oninput="syncColorPicker('primary', this.value)">
+                            </div>
+                        </div>
+                        <div class="color-input-group">
+                            <label for="customAccent">Accent Color</label>
+                            <div class="color-input-row">
+                                <input type="color" id="customAccentPicker" value="#FFC220" onchange="syncColorInput('accent', this.value)">
+                                <input type="text" id="customAccent" value="#FFC220" placeholder="#000000" oninput="syncColorPicker('accent', this.value)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="customWarning" class="custom-warning">
+                        Custom colors may not meet WCAG accessibility standards. Ensure sufficient contrast between background and text colors.
+                    </div>
+
+                    <fieldset class="advanced-colors-section">
+                        <legend>Advanced Colors</legend>
+                        <p class="section-hint">Fine-tune individual colors. Changes override the selected theme.</p>
+                        <div id="advancedColorsGrid" class="advanced-colors-grid">
+                            <!-- Color inputs rendered by JavaScript -->
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="resetColorOverrides()" style="margin-top: 1rem;">
+                            Reset to Theme Defaults
+                        </button>
+                    </fieldset>
+                </section>
+
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+                <!-- LINK LAYOUT SECTION -->
+                <div class="section-label">Link Layout</div>
+                <div class="form-group">
+                    <label for="linkLayout">Layout Style</label>
+                    <select id="linkLayout" onchange="updatePreview()">
+                        <option value="cards" selected>Cards</option>
+                        <option value="list">List</option>
+                        <option value="grid">Grid</option>
+                    </select>
+                </div>
+                <div class="form-group" id="gridColumnsGroup" style="display: none;">
+                    <label for="gridColumns">Grid Columns</label>
+                    <select id="gridColumns" onchange="updatePreview()">
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="buttonStyle">Button Style</label>
+                    <select id="buttonStyle" onchange="updatePreview()">
+                        <option value="rounded" selected>Rounded</option>
+                        <option value="square">Square</option>
+                        <option value="textonly">Text only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="buttonSize">Button Size</label>
+                    <select id="buttonSize" onchange="updatePreview()">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                </div>
+
                 <!-- Page Tab -->
-                <div id="tab-page" class="tab-panel active" role="tabpanel">
+                <div id="tab-page" class="tab-panel" role="tabpanel">
                 <fieldset style="border: none; padding: 0; margin: 0;">
                     <legend class="visually-hidden">Page Settings</legend>
 
@@ -206,8 +303,13 @@
                         </select>
                         <small id="sideLogoPositionWarning" class="position-warning" style="display: none; color: var(--danger);">Position conflicts with another element</small>
                     </div>
+                </fieldset>
+                </div>
 
-                    <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+                <!-- Extras Tab -->
+                <div id="tab-extras" class="tab-panel" role="tabpanel">
+                <fieldset style="border: none; padding: 0; margin: 0;">
+                    <legend class="visually-hidden">Extra Settings</legend>
 
                     <!-- CORNER OVERLAYS SECTION -->
                     <div class="section-label">Corner Overlays</div>
@@ -385,158 +487,27 @@
                             </select>
                         </div>
                     </div>
-
-                    <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
-
-                    <!-- LINK LAYOUT SECTION -->
-                    <div class="section-label">Link Layout</div>
-                    <div class="form-group">
-                        <label for="linkLayout">Layout Style</label>
-                        <select id="linkLayout" onchange="updatePreview()">
-                            <option value="cards" selected>Cards</option>
-                            <option value="list">List</option>
-                            <option value="grid">Grid</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="gridColumnsGroup" style="display: none;">
-                        <label for="gridColumns">Grid Columns</label>
-                        <select id="gridColumns" onchange="updatePreview()">
-                            <option value="2">2</option>
-                            <option value="3" selected>3</option>
-                            <option value="4">4</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="buttonStyle">Button Style</label>
-                        <select id="buttonStyle" onchange="updatePreview()">
-                            <option value="rounded" selected>Rounded</option>
-                            <option value="square">Square</option>
-                            <option value="textonly">Text only</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="buttonSize">Button Size</label>
-                        <select id="buttonSize" onchange="updatePreview()">
-                            <option value="small">Small</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="large">Large</option>
-                        </select>
-                    </div>
                 </fieldset>
+                </div>
 
-                <hr>
+                <!-- Export Tab -->
+                <div id="tab-export" class="tab-panel" role="tabpanel">
                 <!-- DEPLOYMENT SETTINGS -->
                 <fieldset>
                     <legend>Deployment</legend>
                     <div class="form-group">
                         <label for="scriptName">Script Name <small>(used in filename)</small></label>
-                        <input type="text" id="scriptName" value="MyLandingPage" placeholder="MyLandingPage" oninput="debouncedUpdatePreview()">
+                        <input type="text" id="scriptName" value="MyPortal" placeholder="MyPortal" oninput="debouncedUpdatePreview()">
                     </div>
                     <div class="form-group">
                         <label for="destinationPath">Destination Path</label>
-                        <input type="text" id="destinationPath" value="C:\ProgramData\LandingPage\index.html" placeholder="C:\ProgramData\LandingPage\index.html">
-                        <small class="form-hint">Where the landing page HTML file will be saved on target machines</small>
+                        <input type="text" id="destinationPath" value="C:\ProgramData\PortalMaker\index.html" placeholder="C:\ProgramData\PortalMaker\index.html">
+                        <small class="form-hint">Where the portal HTML file will be saved on target machines</small>
                     </div>
                 </fieldset>
-                </div>
-
-                <!-- Theme Tab -->
-                <div id="tab-theme" class="tab-panel" role="tabpanel">
-                <section aria-labelledby="theme-heading">
-                    <p id="theme-description" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
-                        Choose a color theme for your landing page.
-                    </p>
-
-                    <div class="theme-swatches" role="radiogroup" aria-labelledby="theme-heading" id="themeSwatches">
-                        <!-- Swatches will be rendered by JavaScript -->
-                    </div>
-
-                    <div id="customColors" class="custom-colors">
-                        <div class="color-input-group">
-                            <label for="customPrimary">Primary Color</label>
-                            <div class="color-input-row">
-                                <input type="color" id="customPrimaryPicker" value="#0053E2" onchange="syncColorInput('primary', this.value)">
-                                <input type="text" id="customPrimary" value="#0053E2" placeholder="#000000" oninput="syncColorPicker('primary', this.value)">
-                            </div>
-                        </div>
-                        <div class="color-input-group">
-                            <label for="customAccent">Accent Color</label>
-                            <div class="color-input-row">
-                                <input type="color" id="customAccentPicker" value="#FFC220" onchange="syncColorInput('accent', this.value)">
-                                <input type="text" id="customAccent" value="#FFC220" placeholder="#000000" oninput="syncColorPicker('accent', this.value)">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="customWarning" class="custom-warning">
-                        Custom colors may not meet WCAG accessibility standards. Ensure sufficient contrast between background and text colors.
-                    </div>
-
-                    <fieldset class="advanced-colors-section">
-                        <legend>Advanced Colors</legend>
-                        <p class="section-hint">Fine-tune individual colors. Changes override the selected theme.</p>
-                        <div id="advancedColorsGrid" class="advanced-colors-grid">
-                            <!-- Color inputs rendered by JavaScript -->
-                        </div>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="resetColorOverrides()" style="margin-top: 1rem;">
-                            Reset to Theme Defaults
-                        </button>
-                    </fieldset>
-                </section>
-                </div>
-
-                <!-- Links Tab -->
-                <div id="tab-links" class="tab-panel" role="tabpanel">
-                <!-- Link Groups -->
-                <section aria-labelledby="groups-heading">
-                    <h3 id="groups-heading" style="color: var(--primary); margin-bottom: 0.5rem;">Link Groups</h3>
-                    <p id="groups-description" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
-                        Organize links into groups with headings.
-                    </p>
-                    <p style="color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 1.25rem;">
-                        Note: App shortcuts (.lnk) are Windows-only. Use web links for macOS/Linux.
-                    </p>
-
-                    <div id="groupsContainer" class="groups-container" role="region" aria-labelledby="groups-heading" aria-describedby="groups-description" aria-live="polite">
-                        <!-- Groups will be added here dynamically -->
-                    </div>
-
-                    <div class="actions-bar">
-                        <button type="button" class="btn btn-primary" onclick="addGroup()" aria-describedby="groups-description">
-                            + Add Group
-                        </button>
-                    </div>
-                </section>
 
                 <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
 
-                <!-- Standalone Links -->
-                <section aria-labelledby="ungrouped-heading">
-                    <div class="section-header" id="ungrouped-links-header" onclick="toggleSection('ungrouped-links')" aria-expanded="true" aria-controls="ungrouped-links-content" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSection('ungrouped-links')}">
-                        <h3 id="ungrouped-heading" style="color: var(--primary); cursor: pointer;">
-                            <span class="collapse-icon">&#9660;</span> Standalone Links
-                        </h3>
-                    </div>
-                    <div class="section-content" id="ungrouped-links-content">
-                    <p id="ungrouped-description" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
-                        Links here appear without a group heading.
-                    </p>
-
-                    <div id="ungroupedLinksContainer" role="region" aria-labelledby="ungrouped-heading" aria-live="polite">
-                        <!-- Ungrouped links will be added here -->
-                    </div>
-
-                    <div class="actions-bar">
-                        <button type="button" class="btn btn-secondary" onclick="addUngroupedLink()" aria-describedby="ungrouped-description">
-                            + Add Link
-                        </button>
-                    </div>
-                    </div>
-                </section>
-                </div>
-
-                <!-- Export Tab -->
-                <div id="tab-export" class="tab-panel" role="tabpanel">
                 <section class="output-section" aria-labelledby="output-heading">
                     <h3 id="output-heading" class="visually-hidden">Download Options</h3>
 
@@ -557,13 +528,13 @@
         <section class="panel preview-container" aria-labelledby="preview-heading">
             <h2 id="preview-heading" class="panel-header">Live Preview</h2>
             <div class="preview-frame">
-                <iframe id="previewFrame" title="Landing page preview"></iframe>
+                <iframe id="previewFrame" title="Portal preview"></iframe>
             </div>
         </section>
     </main>
 
     <footer role="contentinfo">
-        <p>Landing Page Studio <span id="appVersion" aria-label="Version"></span> | Author: <a href="https://www.linkedin.com/in/joshua-walderbach" target="_blank" rel="noopener noreferrer">Joshua Walderbach</a></p>
+        <p>PortalMaker <span id="appVersion" aria-label="Version"></span> | Author: <a href="https://www.linkedin.com/in/joshua-walderbach" target="_blank" rel="noopener noreferrer">Joshua Walderbach</a></p>
     </footer>
 
     <!-- Screen reader announcements -->

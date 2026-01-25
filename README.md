@@ -1,14 +1,14 @@
-# Landing Page Studio
+# PortalMaker
 
 **Version:** 1.4.0
 **Author:** Joshua Walderbach
 
-> Design branded landing pages for kiosks and curated user experiences. Visual editor with live preview and enterprise deployment.
+> Design branded portal pages for kiosks and curated user experiences. Visual editor with live preview and enterprise deployment.
 
 ## Features
 
-- **Visual Editor** - Configure your landing page without writing code
-- **Tabbed Interface** - Organized configuration in Layout, Colors, Links, and Export tabs
+- **Visual Editor** - Configure your portal without writing code
+- **Tabbed Interface** - Organized configuration in Links, Style, Page, Extras, and Export tabs
 - **Live Preview** - See changes in real-time as you edit
 - **Auto-Save** - Your work is automatically saved to browser storage
 - **Dual Logo Support** - Main logo above greeting, small logo with flexible corner/greeting positioning
@@ -32,10 +32,9 @@
 ## Quick Start
 
 1. **Open** `index.html` in any modern browser
-2. **Or try the hosted version** https://landingpage-studio.pages.dev
-3. **Configure** your page settings, colors, and links
-4. **Preview** changes in real-time on the right panel
-5. **Download** the PowerShell script or standalone HTML
+2. **Configure** your page settings, colors, and links
+3. **Preview** changes in real-time on the right panel
+4. **Download** the PowerShell script or standalone HTML
 
 ## Configuration
 
@@ -57,7 +56,7 @@
 | Button Style | Rounded (default), Square, or Text-only |
 | Button Size | Small, Medium (default), or Large |
 | Script Name | Name used in the PowerShell script filename |
-| Destination Path | Where the landing page saves on target machines |
+| Destination Path | Where the portal saves on target machines |
 
 ### Color Themes
 
@@ -75,7 +74,7 @@ Choose from 20 preset themes or create custom colors:
 
 | Option | Use Case |
 |--------|----------|
-| **PowerShell Script** | Enterprise deployment via Intune/SCCM. Filename: `Generate-LandingPage_[ScriptName].ps1`. Captures computer name at runtime. |
+| **PowerShell Script** | Enterprise deployment via Intune/SCCM. Filename: `Generate-Portal_[ScriptName].ps1`. Captures computer name at runtime. |
 | **Save Configuration** | Save settings as JSON file for backup or sharing. |
 | **Load Configuration** | Import a previously saved configuration. |
 | **Reset Everything** | Clear all settings and start fresh. |
@@ -90,7 +89,7 @@ Edge, Chrome, Firefox, Safari
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Landing Page Studio application |
+| `index.html` | PortalMaker application |
 | `styles.css` | Application styles |
 | `app.js` | Application logic |
 | `README.md` | This documentation |
