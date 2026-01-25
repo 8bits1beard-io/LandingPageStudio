@@ -89,7 +89,7 @@ Presets use Windows URI schemes (e.g., `calculator:`, `ms-settings:`) and are fu
 
 | Option | Use Case |
 |--------|----------|
-| **PowerShell Script** | Enterprise deployment via Intune/SCCM. Filename: `Generate-Portal_[ScriptName].ps1`. Captures computer name at runtime. |
+| **PowerShell Script** | Run directly on target devices, package as an Intune Win32 app, or use in an SCCM Task Sequence. Filename: `Generate-Portal_[ScriptName].ps1`. |
 | **Save Configuration** | Save settings as JSON file for backup or sharing. |
 | **Load Configuration** | Import a previously saved configuration. |
 | **Reset Everything** | Clear all settings and start fresh. |
