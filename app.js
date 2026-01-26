@@ -242,7 +242,7 @@ const PROTOCOL_HANDLERS = {
     'launch-osk': 'C:\\Windows\\System32\\osk.exe',
     'launch-magnify': 'C:\\Windows\\System32\\Magnify.exe',
     'launch-narrator': 'C:\\Windows\\System32\\Narrator.exe',
-    'launch-printers': 'C:\\Windows\\explorer.exe shell:PrintersFolder'
+    'launch-printers': 'C:\\Windows\\System32\\rundll32.exe shell32.dll,SHHelpShortcuts_RunDLL PrintersFolder'
 };
 
 const APP_PRESETS = [
@@ -3075,10 +3075,11 @@ function generatePowerShellScript() {
     const requiredProtocols = getRequiredProtocolHandlers();
 
     // Generate protocol handler hashtable for PowerShell
+    // Note: PowerShell single-quoted strings don't need backslash escaping
     let protocolHashtable = '';
     if (requiredProtocols.length > 0) {
         const entries = requiredProtocols.map(p => {
-            const exePath = PROTOCOL_HANDLERS[p].replace(/\\/g, '\\\\');
+            const exePath = PROTOCOL_HANDLERS[p];
             return `    '${p}' = '${exePath}'`;
         });
         protocolHashtable = `$protocolHandlers = @{\n${entries.join('\n')}\n}`;
@@ -3224,6 +3225,23 @@ ${escapedHtml}
         foreach ($protocol in $protocolHandlers.Keys) {
             $exePath = $protocolHandlers[$protocol]
             Register-ProtocolHandler -Protocol $protocol -Command "\`"$exePath\`""
+        }
+
+        # Verify protocol handlers were created
+        $failedProtocols = @()
+        foreach ($protocol in $protocolHandlers.Keys) {
+            $regPath = "HKCU:\\Software\\Classes\\$protocol\\shell\\open\\command"
+            if (-not (Test-Path $regPath)) {
+                $failedProtocols += $protocol
+                Write-Log "WARNING: Protocol handler not created: $protocol"
+            } else {
+                $cmd = (Get-ItemProperty -Path $regPath -Name '(Default)').'(Default)'
+                Write-Log "Verified protocol: $protocol -> $cmd"
+            }
+        }
+        if ($failedProtocols.Count -gt 0) {
+            Write-Log "ERROR: Failed to create $($failedProtocols.Count) protocol handler(s)"
+            exit 1
         }
 
         Write-Log "Install completed successfully"
