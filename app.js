@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.5';
+const APP_VERSION = '1.0.6';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -245,6 +245,26 @@ const PROTOCOL_HANDLERS = {
     'PortalMaker-narrator': 'C:\\Windows\\System32\\Narrator.exe',
     'PortalMaker-printers': 'C:\\Windows\\System32\\rundll32.exe shell32.dll,SHHelpShortcuts_RunDLL PrintersFolder'
 };
+
+// Migration map for old 'launch-*' protocol URLs to 'PortalMaker-*' format
+const PROTOCOL_URL_MIGRATIONS = {
+    'launch-notepad:': 'PortalMaker-notepad:',
+    'launch-wordpad:': 'PortalMaker-wordpad:',
+    'launch-taskmgr:': 'PortalMaker-taskmgr:',
+    'launch-explorer:': 'PortalMaker-explorer:',
+    'launch-control:': 'PortalMaker-control:',
+    'launch-sndvol:': 'PortalMaker-sndvol:',
+    'launch-osk:': 'PortalMaker-osk:',
+    'launch-magnify:': 'PortalMaker-magnify:',
+    'launch-narrator:': 'PortalMaker-narrator:',
+    'launch-printers:': 'PortalMaker-printers:'
+};
+
+// Migrate old protocol URLs to new format
+function migrateProtocolUrl(url) {
+    if (!url) return '';
+    return PROTOCOL_URL_MIGRATIONS[url] || url;
+}
 
 const APP_PRESETS = [
     // System Tools
@@ -1389,10 +1409,11 @@ function loadState() {
             const isLegacyState = !state.appVersion;
 
             // Clean link objects to only include valid fields (remove app-related fields)
+            // Also migrate old 'launch-*' protocol URLs to 'PortalMaker-*' format
             const cleanLink = (link) => ({
                 id: link.id,
                 name: link.name || '',
-                url: link.url || '',
+                url: migrateProtocolUrl(link.url),
                 icon: link.icon || ''
             });
 
@@ -3681,7 +3702,7 @@ function applyImportedConfig(config) {
         renderAdvancedColors();
     }
 
-    // Apply groups
+    // Apply groups (with URL migration for old 'launch-*' protocols)
     if (config.groups) {
         groups = config.groups.map(g => ({
             id: groupIdCounter++,
@@ -3690,19 +3711,19 @@ function applyImportedConfig(config) {
             links: g.links.map(l => ({
                 id: linkIdCounter++,
                 name: l.name,
-                url: l.url || '',
+                url: migrateProtocolUrl(l.url),
                 icon: l.icon || ''
             }))
         }));
         renderGroups();
     }
 
-    // Apply ungrouped links
+    // Apply ungrouped links (with URL migration for old 'launch-*' protocols)
     if (config.ungroupedLinks) {
         ungroupedLinks = config.ungroupedLinks.map(l => ({
             id: linkIdCounter++,
             name: l.name,
-            url: l.url || '',
+            url: migrateProtocolUrl(l.url),
             icon: l.icon || ''
         }));
         renderUngroupedLinks();
