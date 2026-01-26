@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.14';
+const APP_VERSION = '1.0.15';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -3151,9 +3151,9 @@ function Write-Log {
 
 function Register-ProtocolHandler {
     param([string]$Protocol, [string]$Command)
-    $regPath = "HKCU:\\Software\\Classes\\$Protocol"
+    $regPath = "HKLM:\\Software\\Classes\\$Protocol"
 
-    # Create main protocol key
+    # Create main protocol key (HKLM for machine-wide visibility to all users)
     New-Item -Path $regPath -Force | Out-Null
     Set-ItemProperty -Path $regPath -Name '(Default)' -Value "URL:$Protocol Protocol" -Force
     New-ItemProperty -Path $regPath -Name 'URL Protocol' -Value '' -Force -ErrorAction SilentlyContinue | Out-Null
@@ -3167,7 +3167,7 @@ function Register-ProtocolHandler {
 
 function Unregister-ProtocolHandler {
     param([string]$Protocol)
-    $regPath = "HKCU:\\Software\\Classes\\$Protocol"
+    $regPath = "HKLM:\\Software\\Classes\\$Protocol"
 
     if (Test-Path $regPath) {
         Remove-Item -Path $regPath -Recurse -Force
@@ -3324,7 +3324,7 @@ ${escapedHtml}
         # Verify protocol handlers were created
         $failedProtocols = @()
         foreach ($protocol in $protocolHandlers.Keys) {
-            $regPath = "HKCU:\\Software\\Classes\\$protocol\\shell\\open\\command"
+            $regPath = "HKLM:\\Software\\Classes\\$protocol\\shell\\open\\command"
             if (-not (Test-Path $regPath)) {
                 $failedProtocols += $protocol
                 Write-Log "WARNING: Protocol handler not created: $protocol"
