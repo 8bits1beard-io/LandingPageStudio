@@ -358,16 +358,19 @@
                         <div class="form-group">
                             <label for="networkIdentifierDisplay">Display value</label>
                             <select id="networkIdentifierDisplay" onchange="updatePreview()">
-                                <option value="fqdn">Full network name (FQDN)</option>
-                                <option value="site" selected>Site/location ID (capture group 1)</option>
-                                <option value="region">Region code (capture group 2)</option>
+                                <option value="fqdn">Full FQDN</option>
+                                <option value="1" selected>Capture Group 1</option>
+                                <option value="2">Capture Group 2</option>
+                                <option value="3">Capture Group 3</option>
+                                <option value="4">Capture Group 4</option>
+                                <option value="5">Capture Group 5</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="networkIdentifierPattern">Pattern <small>(advanced)</small></label>
+                            <label for="networkIdentifierPattern">Pattern</label>
                             <input type="text" id="networkIdentifierPattern" value=".*s0(\d{4})\.(\w+)\..*" oninput="updatePreview()">
-                            <small style="color: var(--text-secondary);">Use capture groups: group 1 = site ID, group 2 = region.</small>
+                            <small style="color: var(--text-secondary);">Regex pattern with capture groups. Select which group to display above.</small>
                         </div>
 
                         <div class="form-group">

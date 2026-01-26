@@ -13,7 +13,7 @@ const DEFAULTS = {
     computerNamePosition: 'top-right',
     computerNameFormat: 'hostname',
     networkIdentifierPosition: 'top-left',
-    networkIdentifierDisplay: 'site',
+    networkIdentifierDisplay: '1',
     networkIdentifierPattern: '.*s0(\\d+)\\.(\\w+)\\..*',
     networkIdentifierFallback: 'Unknown',
     dateTimeFormat: 'both',
@@ -1452,7 +1452,11 @@ function loadState() {
                 document.getElementById('computerNameFormat').value = state.settings.computerNameFormat || DEFAULTS.computerNameFormat;
                 document.getElementById('showNetworkIdentifier').checked = state.settings.showNetworkIdentifier === true;
                 document.getElementById('networkIdentifierPosition').value = state.settings.networkIdentifierPosition || DEFAULTS.networkIdentifierPosition;
-                document.getElementById('networkIdentifierDisplay').value = state.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+                // Migrate legacy 'site'/'region' values to capture group numbers
+                let networkDisplayValue = state.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+                if (networkDisplayValue === 'site') networkDisplayValue = '1';
+                if (networkDisplayValue === 'region') networkDisplayValue = '2';
+                document.getElementById('networkIdentifierDisplay').value = networkDisplayValue;
                 document.getElementById('networkIdentifierPattern').value = state.settings.networkIdentifierPattern || DEFAULTS.networkIdentifierPattern;
                 document.getElementById('networkIdentifierFallback').value = state.settings.networkIdentifierFallback || DEFAULTS.networkIdentifierFallback;
                 document.getElementById('showDateTime').checked = state.settings.showDateTime || false;
@@ -3264,10 +3268,9 @@ if ($Uninstall) {
         if ($networkMode -eq 'fqdn') {
             $networkDisplay = $dnsName
         } elseif ($dnsName -match $networkPattern) {
-            if ($networkMode -eq 'site' -and $Matches.Count -ge 2) {
-                $networkDisplay = $Matches[1]
-            } elseif ($networkMode -eq 'region' -and $Matches.Count -ge 3) {
-                $networkDisplay = $Matches[2]
+            $groupNum = [int]$networkMode
+            if ($Matches.Count -gt $groupNum) {
+                $networkDisplay = $Matches[$groupNum]
             }
         }
     } catch {
@@ -3637,7 +3640,11 @@ function applyImportedConfig(config) {
         document.getElementById('computerNameFormat').value = config.settings.computerNameFormat || DEFAULTS.computerNameFormat;
         document.getElementById('showNetworkIdentifier').checked = config.settings.showNetworkIdentifier === true;
         document.getElementById('networkIdentifierPosition').value = config.settings.networkIdentifierPosition || DEFAULTS.networkIdentifierPosition;
-        document.getElementById('networkIdentifierDisplay').value = config.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+        // Migrate legacy 'site'/'region' values to capture group numbers
+        let importedNetworkDisplay = config.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+        if (importedNetworkDisplay === 'site') importedNetworkDisplay = '1';
+        if (importedNetworkDisplay === 'region') importedNetworkDisplay = '2';
+        document.getElementById('networkIdentifierDisplay').value = importedNetworkDisplay;
         document.getElementById('networkIdentifierPattern').value = config.settings.networkIdentifierPattern || DEFAULTS.networkIdentifierPattern;
         document.getElementById('networkIdentifierFallback').value = config.settings.networkIdentifierFallback || DEFAULTS.networkIdentifierFallback;
         document.getElementById('showDateTime').checked = config.settings.showDateTime || false;
