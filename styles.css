@@ -517,6 +517,11 @@ select:focus-visible {
     min-width: 140px;
 }
 
+.link-row .link-tooltip-input {
+    max-width: 200px;
+    min-width: 120px;
+}
+
 .link-row select.link-type-select {
     width: 65px;
     flex: 0 0 auto;
@@ -1547,6 +1552,15 @@ footer a:hover {
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--text-primary);
+}
+
+.preset-exe-path {
+    font-size: 0.625rem;
+    color: var(--text-secondary);
+    word-break: break-all;
+    line-height: 1.2;
+    max-width: 100%;
+    opacity: 0.8;
 }
 
 @media (prefers-reduced-motion: reduce) {

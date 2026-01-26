@@ -126,6 +126,16 @@
                     </div>
                     </div>
                 </section>
+
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+                <div class="form-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="suppressProtocolPrompts" checked>
+                        <span>Suppress browser protocol prompts</span>
+                    </label>
+                    <small class="form-hint">Configures Edge/Chrome to launch app links without confirmation dialogs</small>
+                </div>
                 </div>
 
                 <!-- Style Tab -->
@@ -179,17 +189,19 @@
                 <div class="form-group">
                     <label for="linkLayout">Layout Style</label>
                     <select id="linkLayout" onchange="updatePreview()">
-                        <option value="cards" selected>Cards</option>
+                        <option value="cards">Cards</option>
                         <option value="list">List</option>
-                        <option value="grid">Grid</option>
+                        <option value="grid" selected>Grid</option>
                     </select>
                 </div>
-                <div class="form-group" id="gridColumnsGroup" style="display: none;">
-                    <label for="gridColumns">Grid Columns</label>
+                <div class="form-group" id="gridColumnsGroup">
+                    <label for="gridColumns">Columns per row</label>
                     <select id="gridColumns" onchange="updatePreview()">
                         <option value="2">2</option>
-                        <option value="3" selected>3</option>
-                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -238,8 +250,8 @@
                     <div class="form-group">
                         <label for="greetingSpacing">Greeting Spacing</label>
                         <div class="slider-row">
-                            <input type="range" id="greetingSpacing" min="0" max="5" step="0.25" value="2.5" oninput="updateSliderValue(this); debouncedUpdatePreview()">
-                            <span id="greetingSpacingValue" class="slider-value">2.5rem</span>
+                            <input type="range" id="greetingSpacing" min="0" max="5" step="0.25" value="0.25" oninput="updateSliderValue(this); debouncedUpdatePreview()">
+                            <span id="greetingSpacingValue" class="slider-value">0.25rem</span>
                         </div>
                     </div>
 
@@ -358,16 +370,19 @@
                         <div class="form-group">
                             <label for="networkIdentifierDisplay">Display value</label>
                             <select id="networkIdentifierDisplay" onchange="updatePreview()">
-                                <option value="fqdn">Full network name (FQDN)</option>
-                                <option value="site" selected>Site/location ID (capture group 1)</option>
-                                <option value="region">Region code (capture group 2)</option>
+                                <option value="fqdn">Full FQDN</option>
+                                <option value="1" selected>Capture Group 1</option>
+                                <option value="2">Capture Group 2</option>
+                                <option value="3">Capture Group 3</option>
+                                <option value="4">Capture Group 4</option>
+                                <option value="5">Capture Group 5</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="networkIdentifierPattern">Pattern <small>(advanced)</small></label>
-                            <input type="text" id="networkIdentifierPattern" value=".*s0(\d{4})\.(\w+)\..*" oninput="updatePreview()">
-                            <small style="color: var(--text-secondary);">Use capture groups: group 1 = site ID, group 2 = region.</small>
+                            <label for="networkIdentifierPattern">Pattern</label>
+                            <input type="text" id="networkIdentifierPattern" value="^[^.]+\.([^.]+)\.([^.]+)\..*" oninput="updatePreview()">
+                            <small style="color: var(--text-secondary);">Regex pattern with capture groups. Select which group to display above.</small>
                         </div>
 
                         <div class="form-group">
@@ -419,6 +434,14 @@
                             <option value="footer">In Footer</option>
                         </select>
                         <small id="dateTimePositionWarning" class="position-warning" style="display: none; color: var(--danger);">Position conflicts with another element</small>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="infoBadgeBackground" checked onchange="updatePreview()">
+                            <label for="infoBadgeBackground">Show background on info badges</label>
+                        </div>
+                        <small class="form-hint">Applies to computer name, network identifier, and date/time</small>
                     </div>
 
                     <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
@@ -505,13 +528,6 @@
                         <label for="destinationPath">Destination Path</label>
                         <input type="text" id="destinationPath" value="C:\ProgramData\PortalMaker\index.html" placeholder="C:\ProgramData\PortalMaker\index.html">
                         <small class="form-hint">Where the portal HTML file will be saved on target machines</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="toggle-label">
-                            <input type="checkbox" id="suppressProtocolPrompts" checked>
-                            <span>Suppress browser protocol prompts</span>
-                        </label>
-                        <small class="form-hint">Configures Edge/Chrome to launch app links without confirmation dialogs</small>
                     </div>
                 </fieldset>
 

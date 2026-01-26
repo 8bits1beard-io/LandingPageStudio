@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.6';
+const APP_VERSION = '1.0.17';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -7,27 +7,28 @@ const DEFAULTS = {
     pageTitle: 'Quick Links',
     greeting: '',
     greetingFontSize: '3',      // rem
-    greetingSpacing: '2.5',     // rem
+    greetingSpacing: '0.25',    // rem
     topLogoWidth: '360',        // px
     topLogoSpacing: '1.5',      // rem
     computerNamePosition: 'top-right',
     computerNameFormat: 'hostname',
     networkIdentifierPosition: 'top-left',
-    networkIdentifierDisplay: 'site',
-    networkIdentifierPattern: '.*s0(\\d+)\\.(\\w+)\\..*',
+    networkIdentifierDisplay: '1',
+    networkIdentifierPattern: '^[^.]+\\.([^.]+)\\.([^.]+)\\..*',
     networkIdentifierFallback: 'Unknown',
     dateTimeFormat: 'both',
     dateTimePosition: 'top-left',
+    infoBadgeBackground: true,
     sideLogoPosition: 'left',
     autoRefreshDelay: '30',
     destinationPath: 'C:\\ProgramData\\PortalMaker\\index.html',
     scriptName: 'MyPortal',
     suppressProtocolPrompts: true,
     // Link layout options
-    linkLayout: 'cards',
+    linkLayout: 'grid',
     buttonStyle: 'rounded',
     buttonSize: 'medium',
-    gridColumns: '3',
+    gridColumns: '4',
     // Announcement banner
     bannerEnabled: false,
     bannerTitle: '',
@@ -242,8 +243,7 @@ const PROTOCOL_HANDLERS = {
     'PortalMaker-sndvol': 'C:\\Windows\\System32\\SndVol.exe',
     'PortalMaker-osk': 'C:\\Windows\\System32\\osk.exe',
     'PortalMaker-magnify': 'C:\\Windows\\System32\\Magnify.exe',
-    'PortalMaker-narrator': 'C:\\Windows\\System32\\Narrator.exe',
-    'PortalMaker-printers': 'C:\\Windows\\System32\\rundll32.exe shell32.dll,SHHelpShortcuts_RunDLL PrintersFolder'
+    'PortalMaker-narrator': 'C:\\Windows\\System32\\Narrator.exe'
 };
 
 // Migration map for old 'launch-*' protocol URLs to 'PortalMaker-*' format
@@ -292,8 +292,7 @@ const APP_PRESETS = [
     { id: 'island', name: 'Island', url: 'island:', category: 'Browsers', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>' },
 
     // Print/Devices
-    { id: 'print-queue', name: 'Print Queue', url: 'ms-settings:printers', category: 'Print/Devices', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>' },
-    { id: 'devices-printers', name: 'Devices & Printers', url: 'PortalMaker-printers:', category: 'Print/Devices', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>' }
+    { id: 'print-queue', name: 'Print Queue', url: 'ms-settings:printers', category: 'Print/Devices', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>' }
 ];
 
 // State variables for icon picker
@@ -1008,10 +1007,17 @@ function renderPresetPicker(filter = '') {
         html += `<div class="preset-category">${escapeHtml(category)}</div>`;
         presets.forEach(preset => {
             const isCustom = preset.isCustom === true;
+            // Get executable path for protocol handler apps
+            let exePath = '';
+            if (preset.url && preset.url.startsWith('PortalMaker-') && preset.url.endsWith(':')) {
+                const protocolName = preset.url.slice(0, -1);
+                exePath = PROTOCOL_HANDLERS[protocolName] || '';
+            }
             html += `
-                <button type="button" class="preset-card ${isCustom ? 'preset-card-custom' : ''}" onclick="addPresetAsLink('${preset.id}')" title="${escapeHtml(preset.name)}">
+                <button type="button" class="preset-card ${isCustom ? 'preset-card-custom' : ''}" onclick="addPresetAsLink('${preset.id}')" title="${escapeHtml(preset.name)}${exePath ? '\n' + exePath : ''}">
                     ${preset.icon || '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>'}
                     <span>${escapeHtml(preset.name)}</span>
+                    ${exePath ? `<small class="preset-exe-path">${escapeHtml(exePath)}</small>` : ''}
                     ${isCustom ? `
                         <div class="preset-card-actions" onclick="event.stopPropagation()">
                             <button type="button" class="preset-action-btn" onclick="editCustomPreset('${preset.id}')" title="Edit" aria-label="Edit ${escapeHtml(preset.name)}">
@@ -1313,7 +1319,8 @@ function saveState() {
         id: link.id,
         name: link.name || '',
         url: link.url || '',
-        icon: link.icon || ''
+        icon: link.icon || '',
+        tooltip: link.tooltip || ''
     });
 
     const cleanedGroups = groups.map(g => ({
@@ -1352,6 +1359,7 @@ function saveState() {
             showDateTime: document.getElementById('showDateTime').checked,
             dateTimeFormat: document.getElementById('dateTimeFormat').value,
             dateTimePosition: document.getElementById('dateTimePosition').value,
+            infoBadgeBackground: document.getElementById('infoBadgeBackground').checked,
             topLogoUrl: document.getElementById('topLogoUrl').value,
             topLogoWidth: document.getElementById('topLogoWidth').value,
             topLogoSpacing: document.getElementById('topLogoSpacing').value,
@@ -1473,12 +1481,17 @@ function loadState() {
                 document.getElementById('computerNameFormat').value = state.settings.computerNameFormat || DEFAULTS.computerNameFormat;
                 document.getElementById('showNetworkIdentifier').checked = state.settings.showNetworkIdentifier === true;
                 document.getElementById('networkIdentifierPosition').value = state.settings.networkIdentifierPosition || DEFAULTS.networkIdentifierPosition;
-                document.getElementById('networkIdentifierDisplay').value = state.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+                // Migrate legacy 'site'/'region' values to capture group numbers
+                let networkDisplayValue = state.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+                if (networkDisplayValue === 'site') networkDisplayValue = '1';
+                if (networkDisplayValue === 'region') networkDisplayValue = '2';
+                document.getElementById('networkIdentifierDisplay').value = networkDisplayValue;
                 document.getElementById('networkIdentifierPattern').value = state.settings.networkIdentifierPattern || DEFAULTS.networkIdentifierPattern;
                 document.getElementById('networkIdentifierFallback').value = state.settings.networkIdentifierFallback || DEFAULTS.networkIdentifierFallback;
                 document.getElementById('showDateTime').checked = state.settings.showDateTime || false;
                 document.getElementById('dateTimeFormat').value = state.settings.dateTimeFormat || 'both';
                 document.getElementById('dateTimePosition').value = state.settings.dateTimePosition || 'top-left';
+                document.getElementById('infoBadgeBackground').checked = state.settings.infoBadgeBackground !== false;
                 document.getElementById('topLogoUrl').value = state.settings.topLogoUrl || state.settings.headerLogoUrl || state.settings.logoUrl || '';
                 document.getElementById('sideLogoUrl').value = state.settings.sideLogoUrl || state.settings.cornerLogoUrl || '';
                 document.getElementById('sideLogoPosition').value = state.settings.sideLogoPosition || 'left';
@@ -1912,7 +1925,7 @@ function updateGroupName(groupId, name) {
 // Update link in group
 function updateGroupLink(groupId, linkId, field, value) {
     // Only allow valid link fields
-    const validFields = ['name', 'url', 'icon'];
+    const validFields = ['name', 'url', 'icon', 'tooltip'];
     if (!validFields.includes(field)) return;
 
     const group = groups.find(g => g.id === groupId);
@@ -1947,7 +1960,7 @@ function removeUngroupedLink(linkId) {
 // Update ungrouped link
 function updateUngroupedLink(linkId, field, value) {
     // Only allow valid link fields
-    const validFields = ['name', 'url', 'icon'];
+    const validFields = ['name', 'url', 'icon', 'tooltip'];
     if (!validFields.includes(field)) return;
 
     const link = ungroupedLinks.find(l => l.id === linkId);
@@ -2034,6 +2047,11 @@ function renderGroups() {
                                aria-label="Link URL"
                                onchange="updateGroupLink(${group.id}, ${link.id}, 'url', this.value)"
                                onblur="validateUrlInput(this)">
+                        <input type="text" id="link-tooltip-${group.id}-${link.id}" value="${escapeHtml(link.tooltip || '')}"
+                               placeholder="Tooltip (optional)"
+                               aria-label="Tooltip text shown on hover"
+                               class="link-tooltip-input"
+                               onchange="updateGroupLink(${group.id}, ${link.id}, 'tooltip', this.value)">
                         <button type="button" class="btn btn-danger btn-sm" onclick="removeLinkFromGroup(${group.id}, ${link.id})" aria-label="Remove link ${escapeHtml(link.name) || linkIndex + 1}">
                             <span aria-hidden="true">X</span>
                             <span class="visually-hidden">Remove</span>
@@ -2098,6 +2116,11 @@ function renderUngroupedLinks() {
                    aria-label="Link URL"
                    onchange="updateUngroupedLink(${link.id}, 'url', this.value)"
                    onblur="validateUrlInput(this)">
+            <input type="text" id="ungrouped-tooltip-${link.id}" value="${escapeHtml(link.tooltip || '')}"
+                   placeholder="Tooltip (optional)"
+                   aria-label="Tooltip text shown on hover"
+                   class="link-tooltip-input"
+                   onchange="updateUngroupedLink(${link.id}, 'tooltip', this.value)">
             <button type="button" class="btn btn-danger btn-sm" onclick="removeUngroupedLink(${link.id})" aria-label="Remove link ${escapeHtml(link.name) || linkIndex + 1}">
                 <span aria-hidden="true">X</span>
                 <span class="visually-hidden">Remove</span>
@@ -2132,6 +2155,7 @@ function generateHTML(useComputerNameVariable = false) {
     const showDateTime = document.getElementById('showDateTime').checked;
     const dateTimeFormat = document.getElementById('dateTimeFormat').value;
     const dateTimePosition = document.getElementById('dateTimePosition').value;
+    const infoBadgeBackground = document.getElementById('infoBadgeBackground').checked;
     const topLogoUrl = document.getElementById('topLogoUrl').value.trim();
     const topLogoWidth = document.getElementById('topLogoWidth').value || DEFAULTS.topLogoWidth;
     const topLogoSpacing = document.getElementById('topLogoSpacing').value || DEFAULTS.topLogoSpacing;
@@ -2185,7 +2209,8 @@ function generateHTML(useComputerNameVariable = false) {
                     ${validLinks.map(link => {
                         const href = escapeHtml(link.url);
                         const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
-                        return `<li><a href="${href}" class="link-button style-${buttonStyle} size-${buttonSize}">${iconHtml}${escapeHtml(link.name)}</a></li>`;
+                        const titleAttr = link.tooltip ? ` title="${escapeHtml(link.tooltip)}"` : '';
+                        return `<li><a href="${href}" class="link-button style-${buttonStyle} size-${buttonSize}"${titleAttr}>${iconHtml}${escapeHtml(link.name)}</a></li>`;
                     }).join('')}
                 </ul>
             </section>`;
@@ -2200,7 +2225,8 @@ function generateHTML(useComputerNameVariable = false) {
                 ${validUngrouped.map(link => {
                     const href = escapeHtml(link.url);
                     const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
-                    return `<a href="${href}" class="link-button standalone style-${buttonStyle} size-${buttonSize}">${iconHtml}${escapeHtml(link.name)}</a>`;
+                    const titleAttr = link.tooltip ? ` title="${escapeHtml(link.tooltip)}"` : '';
+                    return `<a href="${href}" class="link-button standalone style-${buttonStyle} size-${buttonSize}"${titleAttr}>${iconHtml}${escapeHtml(link.name)}</a>`;
                 }).join('')}
             </div>`;
     }
@@ -2294,13 +2320,15 @@ function generateHTML(useComputerNameVariable = false) {
             links: g.links.map(l => ({
                 name: l.name,
                 url: l.url || '',
-                icon: l.icon || ''
+                icon: l.icon || '',
+                tooltip: l.tooltip || ''
             }))
         })),
         ungroupedLinks: ungroupedLinks.map(l => ({
             name: l.name,
             url: l.url || '',
-            icon: l.icon || ''
+            icon: l.icon || '',
+            tooltip: l.tooltip || ''
         }))
     };
     const configJson = JSON.stringify(config);
@@ -2367,10 +2395,10 @@ function generateHTML(useComputerNameVariable = false) {
 
         .computer-name {
             position: fixed;
-            background-color: var(--white);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            ${infoBadgeBackground ? 'background-color: var(--white);' : ''}
+            color: ${infoBadgeBackground ? 'var(--primary-color)' : 'var(--white)'};
+            ${infoBadgeBackground ? 'padding: 0.5rem 1rem;' : ''}
+            ${infoBadgeBackground ? 'border-radius: 4px;' : ''}
             font-size: 0.875rem;
             font-weight: 600;
             z-index: 50;
@@ -2418,22 +2446,22 @@ function generateHTML(useComputerNameVariable = false) {
         .network-identifier.below-greeting {
             position: static;
             display: inline-block;
-            margin: 0.5rem auto 1rem;
+            margin: 0 auto;
             text-align: center;
         }
 
         .below-greeting-container {
             text-align: center;
             width: 100%;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .network-identifier {
             position: fixed;
-            background-color: var(--white);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            ${infoBadgeBackground ? 'background-color: var(--white);' : ''}
+            color: ${infoBadgeBackground ? 'var(--primary-color)' : 'var(--white)'};
+            ${infoBadgeBackground ? 'padding: 0.5rem 1rem;' : ''}
+            ${infoBadgeBackground ? 'border-radius: 4px;' : ''}
             font-size: 0.875rem;
             font-weight: 600;
             z-index: 50;
@@ -2441,10 +2469,10 @@ function generateHTML(useComputerNameVariable = false) {
 
         .date-time {
             position: fixed;
-            background-color: var(--white);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            ${infoBadgeBackground ? 'background-color: var(--white);' : ''}
+            color: ${infoBadgeBackground ? 'var(--primary-color)' : 'var(--white)'};
+            ${infoBadgeBackground ? 'padding: 0.5rem 1rem;' : ''}
+            ${infoBadgeBackground ? 'border-radius: 4px;' : ''}
             font-size: 0.875rem;
             font-weight: 600;
             font-family: 'Consolas', 'Monaco', monospace;
@@ -2586,15 +2614,12 @@ function generateHTML(useComputerNameVariable = false) {
             width: 100%;
             max-width: 1400px;
             padding: 0 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
             gap: 1.5rem;
         }
 
         .link-group {
-            flex: 0 1 280px;
-            max-width: 350px;
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 1.25rem;
@@ -2634,6 +2659,7 @@ function generateHTML(useComputerNameVariable = false) {
         }
 
         .standalone-links {
+            grid-column: 1 / -1;
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
@@ -2718,9 +2744,8 @@ function generateHTML(useComputerNameVariable = false) {
         }
 
         @media (max-width: 600px) {
-            .link-group {
-                flex: 1 1 100%;
-                max-width: none;
+            .links-container {
+                grid-template-columns: 1fr;
             }
             .greeting-text {
                 font-size: 2rem;
@@ -2729,13 +2754,11 @@ function generateHTML(useComputerNameVariable = false) {
 
         /* Layout variations */
         .links-container.layout-list {
-            flex-direction: column;
+            grid-template-columns: 1fr;
             max-width: 800px;
         }
 
         .links-container.layout-list .link-group {
-            flex: 1 1 100%;
-            max-width: none;
             background-color: transparent;
             padding: 0;
             margin-bottom: 1.5rem;
@@ -3035,9 +3058,9 @@ function updatePreview() {
     const bannerEnabled = document.getElementById('bannerEnabled').checked;
     document.getElementById('bannerOptionsGroup').style.display = bannerEnabled ? 'block' : 'none';
 
-    // Toggle grid columns visibility
+    // Toggle grid columns visibility (show for cards and grid layouts)
     const linkLayout = document.getElementById('linkLayout').value;
-    document.getElementById('gridColumnsGroup').style.display = linkLayout === 'grid' ? 'block' : 'none';
+    document.getElementById('gridColumnsGroup').style.display = linkLayout !== 'list' ? 'block' : 'none';
 
     // Save state to localStorage
     saveState();
@@ -3149,9 +3172,9 @@ function Write-Log {
 
 function Register-ProtocolHandler {
     param([string]$Protocol, [string]$Command)
-    $regPath = "HKCU:\\Software\\Classes\\$Protocol"
+    $regPath = "HKLM:\\Software\\Classes\\$Protocol"
 
-    # Create main protocol key
+    # Create main protocol key (HKLM for machine-wide visibility to all users)
     New-Item -Path $regPath -Force | Out-Null
     Set-ItemProperty -Path $regPath -Name '(Default)' -Value "URL:$Protocol Protocol" -Force
     New-ItemProperty -Path $regPath -Name 'URL Protocol' -Value '' -Force -ErrorAction SilentlyContinue | Out-Null
@@ -3165,7 +3188,7 @@ function Register-ProtocolHandler {
 
 function Unregister-ProtocolHandler {
     param([string]$Protocol)
-    $regPath = "HKCU:\\Software\\Classes\\$Protocol"
+    $regPath = "HKLM:\\Software\\Classes\\$Protocol"
 
     if (Test-Path $regPath) {
         Remove-Item -Path $regPath -Recurse -Force
@@ -3213,6 +3236,18 @@ function Set-BrowserProtocolPolicy {
     } catch {
         Write-Log "WARNING: Could not configure Chrome policy (may require admin): $_"
     }
+
+    # Configure Brave browser policy
+    $bravePolicyPath = "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave"
+    try {
+        if (-not (Test-Path $bravePolicyPath)) {
+            New-Item -Path $bravePolicyPath -Force -ErrorAction Stop | Out-Null
+        }
+        Set-ItemProperty -Path $bravePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -Value $policyValue -Force
+        Write-Log "Configured Brave policy for protocols: $($Protocols -join ', ')"
+    } catch {
+        Write-Log "WARNING: Could not configure Brave policy (may require admin): $_"
+    }
 }
 
 function Remove-BrowserProtocolPolicy {
@@ -3228,6 +3263,13 @@ function Remove-BrowserProtocolPolicy {
     if (Test-Path $chromePolicyPath) {
         Remove-ItemProperty -Path $chromePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -ErrorAction SilentlyContinue
         Write-Log "Removed Chrome protocol policy"
+    }
+
+    # Remove Brave policy
+    $bravePolicyPath = "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave"
+    if (Test-Path $bravePolicyPath) {
+        Remove-ItemProperty -Path $bravePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -ErrorAction SilentlyContinue
+        Write-Log "Removed Brave protocol policy"
     }
 }
 
@@ -3285,10 +3327,9 @@ if ($Uninstall) {
         if ($networkMode -eq 'fqdn') {
             $networkDisplay = $dnsName
         } elseif ($dnsName -match $networkPattern) {
-            if ($networkMode -eq 'site' -and $Matches.Count -ge 2) {
-                $networkDisplay = $Matches[1]
-            } elseif ($networkMode -eq 'region' -and $Matches.Count -ge 3) {
-                $networkDisplay = $Matches[2]
+            $groupNum = [int]$networkMode
+            if ($Matches.Count -gt $groupNum) {
+                $networkDisplay = $Matches[$groupNum]
             }
         }
     } catch {
@@ -3323,7 +3364,7 @@ ${escapedHtml}
         # Verify protocol handlers were created
         $failedProtocols = @()
         foreach ($protocol in $protocolHandlers.Keys) {
-            $regPath = "HKCU:\\Software\\Classes\\$protocol\\shell\\open\\command"
+            $regPath = "HKLM:\\Software\\Classes\\$protocol\\shell\\open\\command"
             if (-not (Test-Path $regPath)) {
                 $failedProtocols += $protocol
                 Write-Log "WARNING: Protocol handler not created: $protocol"
@@ -3504,6 +3545,7 @@ function exportConfiguration() {
             showDateTime: document.getElementById('showDateTime').checked,
             dateTimeFormat: document.getElementById('dateTimeFormat').value,
             dateTimePosition: document.getElementById('dateTimePosition').value,
+            infoBadgeBackground: document.getElementById('infoBadgeBackground').checked,
             topLogoUrl: document.getElementById('topLogoUrl').value,
             topLogoWidth: document.getElementById('topLogoWidth').value,
             topLogoSpacing: document.getElementById('topLogoSpacing').value,
@@ -3658,12 +3700,17 @@ function applyImportedConfig(config) {
         document.getElementById('computerNameFormat').value = config.settings.computerNameFormat || DEFAULTS.computerNameFormat;
         document.getElementById('showNetworkIdentifier').checked = config.settings.showNetworkIdentifier === true;
         document.getElementById('networkIdentifierPosition').value = config.settings.networkIdentifierPosition || DEFAULTS.networkIdentifierPosition;
-        document.getElementById('networkIdentifierDisplay').value = config.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+        // Migrate legacy 'site'/'region' values to capture group numbers
+        let importedNetworkDisplay = config.settings.networkIdentifierDisplay || DEFAULTS.networkIdentifierDisplay;
+        if (importedNetworkDisplay === 'site') importedNetworkDisplay = '1';
+        if (importedNetworkDisplay === 'region') importedNetworkDisplay = '2';
+        document.getElementById('networkIdentifierDisplay').value = importedNetworkDisplay;
         document.getElementById('networkIdentifierPattern').value = config.settings.networkIdentifierPattern || DEFAULTS.networkIdentifierPattern;
         document.getElementById('networkIdentifierFallback').value = config.settings.networkIdentifierFallback || DEFAULTS.networkIdentifierFallback;
         document.getElementById('showDateTime').checked = config.settings.showDateTime || false;
         document.getElementById('dateTimeFormat').value = config.settings.dateTimeFormat || 'both';
         document.getElementById('dateTimePosition').value = config.settings.dateTimePosition || 'top-left';
+        document.getElementById('infoBadgeBackground').checked = config.settings.infoBadgeBackground !== false;
         document.getElementById('topLogoUrl').value = config.settings.topLogoUrl || '';
         document.getElementById('sideLogoUrl').value = config.settings.sideLogoUrl || '';
         document.getElementById('sideLogoPosition').value = config.settings.sideLogoPosition || 'left';
@@ -3712,7 +3759,8 @@ function applyImportedConfig(config) {
                 id: linkIdCounter++,
                 name: l.name,
                 url: migrateProtocolUrl(l.url),
-                icon: l.icon || ''
+                icon: l.icon || '',
+                tooltip: l.tooltip || ''
             }))
         }));
         renderGroups();
@@ -3724,7 +3772,8 @@ function applyImportedConfig(config) {
             id: linkIdCounter++,
             name: l.name,
             url: migrateProtocolUrl(l.url),
-            icon: l.icon || ''
+            icon: l.icon || '',
+            tooltip: l.tooltip || ''
         }));
         renderUngroupedLinks();
     }
@@ -3820,6 +3869,7 @@ function resetAll() {
     document.getElementById('showDateTime').checked = false;
     document.getElementById('dateTimeFormat').value = DEFAULTS.dateTimeFormat;
     document.getElementById('dateTimePosition').value = DEFAULTS.dateTimePosition;
+    document.getElementById('infoBadgeBackground').checked = DEFAULTS.infoBadgeBackground;
     document.getElementById('topLogoUrl').value = '';
     document.getElementById('sideLogoUrl').value = '';
     document.getElementById('sideLogoPosition').value = DEFAULTS.sideLogoPosition;
