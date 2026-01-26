@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.8';
+const APP_VERSION = '1.0.9';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -18,6 +18,7 @@ const DEFAULTS = {
     networkIdentifierFallback: 'Unknown',
     dateTimeFormat: 'both',
     dateTimePosition: 'top-left',
+    infoBadgeBackground: true,
     sideLogoPosition: 'left',
     autoRefreshDelay: '30',
     destinationPath: 'C:\\ProgramData\\PortalMaker\\index.html',
@@ -1332,6 +1333,7 @@ function saveState() {
             showDateTime: document.getElementById('showDateTime').checked,
             dateTimeFormat: document.getElementById('dateTimeFormat').value,
             dateTimePosition: document.getElementById('dateTimePosition').value,
+            infoBadgeBackground: document.getElementById('infoBadgeBackground').checked,
             topLogoUrl: document.getElementById('topLogoUrl').value,
             topLogoWidth: document.getElementById('topLogoWidth').value,
             topLogoSpacing: document.getElementById('topLogoSpacing').value,
@@ -1462,6 +1464,7 @@ function loadState() {
                 document.getElementById('showDateTime').checked = state.settings.showDateTime || false;
                 document.getElementById('dateTimeFormat').value = state.settings.dateTimeFormat || 'both';
                 document.getElementById('dateTimePosition').value = state.settings.dateTimePosition || 'top-left';
+                document.getElementById('infoBadgeBackground').checked = state.settings.infoBadgeBackground !== false;
                 document.getElementById('topLogoUrl').value = state.settings.topLogoUrl || state.settings.headerLogoUrl || state.settings.logoUrl || '';
                 document.getElementById('sideLogoUrl').value = state.settings.sideLogoUrl || state.settings.cornerLogoUrl || '';
                 document.getElementById('sideLogoPosition').value = state.settings.sideLogoPosition || 'left';
@@ -2115,6 +2118,7 @@ function generateHTML(useComputerNameVariable = false) {
     const showDateTime = document.getElementById('showDateTime').checked;
     const dateTimeFormat = document.getElementById('dateTimeFormat').value;
     const dateTimePosition = document.getElementById('dateTimePosition').value;
+    const infoBadgeBackground = document.getElementById('infoBadgeBackground').checked;
     const topLogoUrl = document.getElementById('topLogoUrl').value.trim();
     const topLogoWidth = document.getElementById('topLogoWidth').value || DEFAULTS.topLogoWidth;
     const topLogoSpacing = document.getElementById('topLogoSpacing').value || DEFAULTS.topLogoSpacing;
@@ -2350,10 +2354,10 @@ function generateHTML(useComputerNameVariable = false) {
 
         .computer-name {
             position: fixed;
-            background-color: var(--white);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            ${infoBadgeBackground ? 'background-color: var(--white);' : ''}
+            color: ${infoBadgeBackground ? 'var(--primary-color)' : 'var(--white)'};
+            ${infoBadgeBackground ? 'padding: 0.5rem 1rem;' : ''}
+            ${infoBadgeBackground ? 'border-radius: 4px;' : ''}
             font-size: 0.875rem;
             font-weight: 600;
             z-index: 50;
@@ -2413,10 +2417,10 @@ function generateHTML(useComputerNameVariable = false) {
 
         .network-identifier {
             position: fixed;
-            background-color: var(--white);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            ${infoBadgeBackground ? 'background-color: var(--white);' : ''}
+            color: ${infoBadgeBackground ? 'var(--primary-color)' : 'var(--white)'};
+            ${infoBadgeBackground ? 'padding: 0.5rem 1rem;' : ''}
+            ${infoBadgeBackground ? 'border-radius: 4px;' : ''}
             font-size: 0.875rem;
             font-weight: 600;
             z-index: 50;
@@ -2424,10 +2428,10 @@ function generateHTML(useComputerNameVariable = false) {
 
         .date-time {
             position: fixed;
-            background-color: var(--white);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            ${infoBadgeBackground ? 'background-color: var(--white);' : ''}
+            color: ${infoBadgeBackground ? 'var(--primary-color)' : 'var(--white)'};
+            ${infoBadgeBackground ? 'padding: 0.5rem 1rem;' : ''}
+            ${infoBadgeBackground ? 'border-radius: 4px;' : ''}
             font-size: 0.875rem;
             font-weight: 600;
             font-family: 'Consolas', 'Monaco', monospace;
@@ -3486,6 +3490,7 @@ function exportConfiguration() {
             showDateTime: document.getElementById('showDateTime').checked,
             dateTimeFormat: document.getElementById('dateTimeFormat').value,
             dateTimePosition: document.getElementById('dateTimePosition').value,
+            infoBadgeBackground: document.getElementById('infoBadgeBackground').checked,
             topLogoUrl: document.getElementById('topLogoUrl').value,
             topLogoWidth: document.getElementById('topLogoWidth').value,
             topLogoSpacing: document.getElementById('topLogoSpacing').value,
@@ -3650,6 +3655,7 @@ function applyImportedConfig(config) {
         document.getElementById('showDateTime').checked = config.settings.showDateTime || false;
         document.getElementById('dateTimeFormat').value = config.settings.dateTimeFormat || 'both';
         document.getElementById('dateTimePosition').value = config.settings.dateTimePosition || 'top-left';
+        document.getElementById('infoBadgeBackground').checked = config.settings.infoBadgeBackground !== false;
         document.getElementById('topLogoUrl').value = config.settings.topLogoUrl || '';
         document.getElementById('sideLogoUrl').value = config.settings.sideLogoUrl || '';
         document.getElementById('sideLogoPosition').value = config.settings.sideLogoPosition || 'left';
@@ -3806,6 +3812,7 @@ function resetAll() {
     document.getElementById('showDateTime').checked = false;
     document.getElementById('dateTimeFormat').value = DEFAULTS.dateTimeFormat;
     document.getElementById('dateTimePosition').value = DEFAULTS.dateTimePosition;
+    document.getElementById('infoBadgeBackground').checked = DEFAULTS.infoBadgeBackground;
     document.getElementById('topLogoUrl').value = '';
     document.getElementById('sideLogoUrl').value = '';
     document.getElementById('sideLogoPosition').value = DEFAULTS.sideLogoPosition;
