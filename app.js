@@ -3223,7 +3223,7 @@ ${escapedHtml}
         # Register protocol handlers for app launching
         foreach ($protocol in $protocolHandlers.Keys) {
             $exePath = $protocolHandlers[$protocol]
-            Register-ProtocolHandler -Protocol $protocol -Command "`"$exePath`""
+            Register-ProtocolHandler -Protocol $protocol -Command "\`"$exePath\`""
         }
 
         Write-Log "Install completed successfully"
