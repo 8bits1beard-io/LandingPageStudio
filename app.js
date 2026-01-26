@@ -1201,9 +1201,18 @@ function toggleSection(sectionId) {
 // URL validation
 function isValidUrl(string) {
     if (!string || string.trim() === '') return true; // Empty is ok (optional)
-    // Allow http, https, and Windows app URI schemes
-    const urlPattern = /^(https?:\/\/|ms-|calculator:|xbox:|msteams:|bingmaps:|msnweather:|feedback-hub:).+/i;
-    return urlPattern.test(string.trim());
+    const s = string.trim();
+    // Allow http/https URLs
+    if (/^https?:\/\/.+/i.test(s)) return true;
+    // Allow Windows URI schemes (word followed by colon, optionally with more content)
+    // Examples: calculator:, ms-settings:, osk:, notepad:, microsoft-edge:https://example.com
+    if (/^[a-z][a-z0-9+.-]*:/i.test(s)) return true;
+    // Allow Windows executables and commands
+    // Examples: sndvol.exe, explorer.exe, control, taskmgr
+    if (/^[a-z0-9_-]+(\.(exe|com|bat|cmd))?$/i.test(s)) return true;
+    // Allow shell: paths
+    if (/^shell:/i.test(s)) return true;
+    return false;
 }
 
 function validateUrlInput(input) {
