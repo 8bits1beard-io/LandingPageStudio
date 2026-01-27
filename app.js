@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.20';
+const APP_VERSION = '1.0.21';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -3159,7 +3159,7 @@ ${protocolHashtable}
 
 # Browser protocol prompt settings
 $suppressProtocolPrompts = $${suppressProtocolPrompts}
-$protocolsForPolicy = @(${requiredProtocols.length > 0 ? requiredProtocols.map(p => `'${p}:'`).join(', ') : ''})
+$protocolsForPolicy = @(${requiredProtocols.length > 0 ? requiredProtocols.map(p => `'${p}'`).join(', ') : ''})
 
 # Create log directory if it doesn't exist
 if (-not (Test-Path $logFolder)) {
@@ -3208,13 +3208,19 @@ function Set-BrowserProtocolPolicy {
     }
 
     # Build the policy JSON for AutoLaunchProtocolsFromOrigins
-    # This allows protocols to launch without prompts from file:// and the output folder
-    $policyValue = @(
-        @{
+    # Each protocol needs its own entry with allowed_origins
+    $policyEntries = @()
+    foreach ($proto in $Protocols) {
+        $policyEntries += @{
+            protocol = $proto
             allowed_origins = @("file://*", "*")
-            protocols = $Protocols
         }
-    ) | ConvertTo-Json -Compress
+    }
+    $policyValue = $policyEntries | ConvertTo-Json -Compress -Depth 3
+    # Ensure single-entry array is still wrapped in brackets
+    if ($policyEntries.Count -eq 1) {
+        $policyValue = "[$policyValue]"
+    }
 
     # Configure Microsoft Edge policy (HKLM for machine-wide)
     $edgePolicyPath = "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge"
