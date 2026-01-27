@@ -131,6 +131,12 @@
 
                 <div class="form-group">
                     <label class="toggle-label">
+                        <input type="checkbox" id="openLinksNewTab" onchange="updatePreview()">
+                        <span>Open links in new tab</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="toggle-label">
                         <input type="checkbox" id="suppressProtocolPrompts" checked>
                         <span>Suppress browser protocol prompts</span>
                     </label>
@@ -220,12 +226,6 @@
                         <option value="medium" selected>Medium</option>
                         <option value="large">Large</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label class="toggle-label">
-                        <input type="checkbox" id="openLinksNewTab" onchange="updatePreview()">
-                        Open links in new tab
-                    </label>
                 </div>
                 </div>
 
