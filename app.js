@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.24';
+const APP_VERSION = '1.0.25';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -2751,12 +2751,23 @@ function generateHTML(useComputerNameVariable = false) {
             .links-container {
                 grid-template-columns: 1fr;
             }
+            .links-container.layout-grid .links-list,
+            .links-container.layout-grid .standalone-links,
+            .links-container.layout-buttons .links-list,
+            .links-container.layout-buttons .standalone-links {
+                grid-template-columns: 1fr;
+            }
+            .links-container.layout-buttons .link-button,
+            .links-container.layout-buttons .standalone-links .link-button {
+                aspect-ratio: auto;
+                min-height: 60px;
+            }
             .greeting-text {
                 font-size: 2rem;
             }
         }
 
-        /* Layout variations */
+        /* Layout: List - single column, compact, transparent groups */
         .links-container.layout-list {
             grid-template-columns: 1fr;
             max-width: 800px;
@@ -2781,34 +2792,123 @@ function generateHTML(useComputerNameVariable = false) {
             padding: 0.875rem 1.25rem;
         }
 
+        .links-container.layout-list .standalone-links {
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+        }
+
+        .links-container.layout-list .standalone-links .link-button {
+            justify-content: flex-start;
+            padding: 0.875rem 1.25rem;
+            min-width: unset;
+        }
+
+        /* Layout: Grid - full-width group sections, links in multi-column grid within each */
         .links-container.layout-grid {
-            display: grid;
-            grid-template-columns: repeat(${gridColumns}, 1fr);
-            gap: 1rem;
+            grid-template-columns: 1fr;
             max-width: 1200px;
+            gap: 1.5rem;
         }
 
         .links-container.layout-grid .link-group {
-            display: contents;
+            background-color: transparent;
+            padding: 0;
         }
 
         .links-container.layout-grid .group-heading-row {
-            grid-column: 1 / -1;
-            margin-top: 1rem;
-            background: transparent;
+            margin-bottom: 1rem;
         }
 
         .links-container.layout-grid .links-list {
-            display: contents;
+            display: grid;
+            grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
+            gap: 0.75rem;
         }
 
         .links-container.layout-grid .links-list li {
-            display: block;
+            display: flex;
         }
 
         .links-container.layout-grid .standalone-links {
-            grid-column: 1 / -1;
-            display: contents;
+            display: grid;
+            grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-top: 0;
+        }
+
+        .links-container.layout-grid .standalone-links .link-button {
+            min-width: unset;
+        }
+
+        /* Layout: Buttons - uniform tile grid, groups as full-width dividers */
+        .links-container.layout-buttons {
+            grid-template-columns: 1fr;
+            max-width: 1200px;
+            gap: 2rem;
+        }
+
+        .links-container.layout-buttons .link-group {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .links-container.layout-buttons .group-heading-row {
+            margin-bottom: 1rem;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .links-container.layout-buttons .group-heading {
+            text-align: center;
+        }
+
+        .links-container.layout-buttons .links-list {
+            display: grid;
+            grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .links-container.layout-buttons .links-list li {
+            display: flex;
+        }
+
+        .links-container.layout-buttons .link-button {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            aspect-ratio: 1 / 1;
+            padding: 1rem;
+            min-height: 100px;
+        }
+
+        .links-container.layout-buttons .link-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .links-container.layout-buttons .standalone-links {
+            display: grid;
+            grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 0;
+        }
+
+        .links-container.layout-buttons .standalone-links .link-button {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            aspect-ratio: 1 / 1;
+            padding: 1rem;
+            min-height: 100px;
+            min-width: unset;
+        }
+
+        .links-container.layout-buttons .standalone-links .link-icon {
+            width: 32px;
+            height: 32px;
         }
 
         /* Button style variations */
