@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.27';
+const APP_VERSION = '1.0.28';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -3170,7 +3170,7 @@ function updatePreview() {
     // Toggle grid columns visibility and label (show for cards, grid, and buttons layouts)
     const linkLayout = document.getElementById('linkLayout').value;
     document.getElementById('gridColumnsGroup').style.display = linkLayout !== 'list' ? 'block' : 'none';
-    document.getElementById('gridColumnsLabel').textContent = linkLayout === 'cards' ? 'Cards per row' : 'Columns per row';
+    document.getElementById('gridColumnsLabel').textContent = linkLayout === 'cards' ? 'Groups per row' : 'Columns per row';
 
     // Save state to localStorage
     saveState();
