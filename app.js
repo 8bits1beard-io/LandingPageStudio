@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.31';
+const APP_VERSION = '1.0.32';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -22,7 +22,6 @@ const DEFAULTS = {
     autoRefreshDelay: '30',
     destinationPath: 'C:\\ProgramData\\PortalMaker\\index.html',
     scriptName: 'MyPortal',
-    suppressProtocolPrompts: true,
     // Link layout options
     linkLayout: 'grid',
     buttonStyle: 'rounded',
@@ -1376,7 +1375,6 @@ function saveState() {
             autoRefreshUrl: document.getElementById('autoRefreshUrl').value,
             scriptName: document.getElementById('scriptName').value,
             destinationPath: document.getElementById('destinationPath').value,
-            suppressProtocolPrompts: document.getElementById('suppressProtocolPrompts').checked,
             // Link layout
             linkLayout: document.getElementById('linkLayout').value,
             buttonStyle: document.getElementById('buttonStyle').value,
@@ -1509,7 +1507,6 @@ function loadState() {
                 document.getElementById('autoRefreshUrl').value = state.settings.autoRefreshUrl || '';
                 document.getElementById('scriptName').value = state.settings.scriptName || 'MyPortal';
                 document.getElementById('destinationPath').value = state.settings.destinationPath || 'C:\\ProgramData\\PortalMaker\\index.html';
-                document.getElementById('suppressProtocolPrompts').checked = state.settings.suppressProtocolPrompts ?? true;
 
                 // Restore link layout settings
                 document.getElementById('linkLayout').value = state.settings.linkLayout || DEFAULTS.linkLayout;
@@ -3356,32 +3353,6 @@ function getRequiredProtocolHandlers() {
     return Array.from(protocols);
 }
 
-// Get all non-web protocol schemes used in links (for browser policy suppression)
-function getAllProtocolSchemes() {
-    const schemes = new Set();
-    const webPrefixes = ['http://', 'https://', 'mailto:', 'tel:'];
-
-    function extractScheme(url) {
-        if (!url) return;
-        // Skip web URLs
-        for (const prefix of webPrefixes) {
-            if (url.toLowerCase().startsWith(prefix)) return;
-        }
-        // Extract scheme (everything before the first colon)
-        const colonIndex = url.indexOf(':');
-        if (colonIndex > 0) {
-            schemes.add(url.slice(0, colonIndex));
-        }
-    }
-
-    groups.forEach(group => {
-        group.links.forEach(link => extractScheme(link.url));
-    });
-    ungroupedLinks.forEach(link => extractScheme(link.url));
-
-    return Array.from(schemes);
-}
-
 // Generate PowerShell script
 function generatePowerShellScript() {
     const htmlContent = generateHTML(true);
@@ -3405,10 +3376,8 @@ function generatePowerShellScript() {
     // Get the filename from destination path for uninstall
     const fileName = destinationPath.substring(destinationPath.lastIndexOf('\\') + 1) || 'index.html';
 
-    // Get required protocol handlers (for registry) and all schemes (for browser policy)
+    // Get required protocol handlers (for registry)
     const requiredProtocols = getRequiredProtocolHandlers();
-    const allProtocolSchemes = getAllProtocolSchemes();
-    const suppressProtocolPrompts = document.getElementById('suppressProtocolPrompts')?.checked ?? true;
 
     // Generate protocol handler hashtable for PowerShell
     // Note: PowerShell single-quoted strings don't need backslash escaping
@@ -3442,10 +3411,6 @@ $timestamp = Get-Date -Format 'yyyy-MM-ddTHH-mm-ss'
 
 # Protocol handlers for app launching (registered in HKCU)
 ${protocolHashtable}
-
-# Browser protocol prompt settings
-$suppressProtocolPrompts = $${suppressProtocolPrompts}
-$protocolsForPolicy = @(${allProtocolSchemes.length > 0 ? allProtocolSchemes.map(p => `'${p}'`).join(', ') : ''})
 
 # Create log directory if it doesn't exist
 if (-not (Test-Path $logFolder)) {
@@ -3485,82 +3450,6 @@ function Unregister-ProtocolHandler {
     }
 }
 
-function Set-BrowserProtocolPolicy {
-    param([string[]]$Protocols, [bool]$Suppress)
-
-    if (-not $Suppress -or $Protocols.Count -eq 0) {
-        Write-Log "Browser protocol policy: skipped (not enabled or no protocols)"
-        return
-    }
-
-    # Build the policy JSON for AutoLaunchProtocolsFromOrigins
-    # Each protocol needs its own entry with allowed_origins
-    # Build JSON string directly to avoid PowerShell ConvertTo-Json array-unwrapping issues
-    $entries = @()
-    foreach ($proto in $Protocols) {
-        $entries += '{"protocol":"' + $proto + '","allowed_origins":["*"]}'
-    }
-    $policyValue = '[' + ($entries -join ',') + ']'
-    Write-Log "Browser protocol policy JSON: $policyValue"
-
-    # Configure Microsoft Edge policy (HKLM for machine-wide)
-    $edgePolicyPath = "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge"
-    try {
-        if (-not (Test-Path $edgePolicyPath)) {
-            New-Item -Path $edgePolicyPath -Force | Out-Null
-        }
-        Set-ItemProperty -Path $edgePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -Value $policyValue -Force
-        Write-Log "Configured Edge policy for protocols: $($Protocols -join ', ')"
-    } catch {
-        Write-Log "WARNING: Could not configure Edge policy (may require admin): $_"
-    }
-
-    # Configure Google Chrome policy
-    $chromePolicyPath = "HKLM:\\SOFTWARE\\Policies\\Google\\Chrome"
-    try {
-        if (-not (Test-Path $chromePolicyPath)) {
-            New-Item -Path $chromePolicyPath -Force -ErrorAction Stop | Out-Null
-        }
-        Set-ItemProperty -Path $chromePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -Value $policyValue -Force
-        Write-Log "Configured Chrome policy for protocols: $($Protocols -join ', ')"
-    } catch {
-        Write-Log "WARNING: Could not configure Chrome policy (may require admin): $_"
-    }
-
-    # Configure Brave browser policy
-    $bravePolicyPath = "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave"
-    try {
-        if (-not (Test-Path $bravePolicyPath)) {
-            New-Item -Path $bravePolicyPath -Force -ErrorAction Stop | Out-Null
-        }
-        Set-ItemProperty -Path $bravePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -Value $policyValue -Force
-        Write-Log "Configured Brave policy for protocols: $($Protocols -join ', ')"
-    } catch {
-        Write-Log "WARNING: Could not configure Brave policy (may require admin): $_"
-    }
-}
-
-function Remove-BrowserProtocolPolicy {
-    # Remove Edge policy
-    $edgePolicyPath = "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge"
-    if (Test-Path $edgePolicyPath) {
-        Remove-ItemProperty -Path $edgePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -ErrorAction SilentlyContinue
-        Write-Log "Removed Edge protocol policy"
-    }
-
-    # Remove Chrome policy
-    $chromePolicyPath = "HKLM:\\SOFTWARE\\Policies\\Google\\Chrome"
-    if (Test-Path $chromePolicyPath) {
-        Remove-ItemProperty -Path $chromePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -ErrorAction SilentlyContinue
-        Write-Log "Removed Chrome protocol policy"
-    }
-
-    # Remove Brave policy
-    $bravePolicyPath = "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave"
-    if (Test-Path $bravePolicyPath) {
-        Remove-ItemProperty -Path $bravePolicyPath -Name 'AutoLaunchProtocolsFromOrigins' -ErrorAction SilentlyContinue
-        Write-Log "Removed Brave protocol policy"
-    }
 }
 
 if ($Uninstall) {
@@ -3576,9 +3465,6 @@ if ($Uninstall) {
         foreach ($protocol in $protocolHandlers.Keys) {
             Unregister-ProtocolHandler -Protocol $protocol
         }
-
-        # Remove browser protocol policies
-        Remove-BrowserProtocolPolicy
 
         # Remove the HTML file
         if (Test-Path $outputPath) {
@@ -3670,9 +3556,6 @@ ${escapedHtml}
             Write-Log "ERROR: Failed to create $($failedProtocols.Count) protocol handler(s)"
             exit 1
         }
-
-        # Configure browser policies to suppress protocol prompts
-        Set-BrowserProtocolPolicy -Protocols $protocolsForPolicy -Suppress $suppressProtocolPrompts
 
         Write-Log "Install completed successfully"
         Write-Log "Log file: $logFile"
@@ -4012,7 +3895,6 @@ function applyImportedConfig(config) {
         document.getElementById('enableAutoRefresh').checked = config.settings.enableAutoRefresh || false;
         document.getElementById('autoRefreshDelay').value = config.settings.autoRefreshDelay || '30';
         document.getElementById('autoRefreshUrl').value = config.settings.autoRefreshUrl || '';
-        document.getElementById('suppressProtocolPrompts').checked = config.settings.suppressProtocolPrompts ?? true;
 
         // Link layout options
         document.getElementById('linkLayout').value = config.settings.linkLayout || DEFAULTS.linkLayout;
@@ -4146,7 +4028,6 @@ function resetAll() {
     document.getElementById('autoRefreshUrl').value = '';
     document.getElementById('scriptName').value = DEFAULTS.scriptName;
     document.getElementById('destinationPath').value = DEFAULTS.destinationPath;
-    document.getElementById('suppressProtocolPrompts').checked = DEFAULTS.suppressProtocolPrompts;
 
     // Reset link layout settings
     document.getElementById('linkLayout').value = DEFAULTS.linkLayout;

@@ -1,6 +1,6 @@
 # PortalMaker
 
-**Version:** 1.0.31
+**Version:** 1.0.32
 **Author:** Joshua Walderbach
 **License:** [MIT](LICENSE)
 
@@ -103,10 +103,9 @@ Applications use Windows URI schemes (e.g., `calculator:`, `ms-settings:`) or cu
 
 ### PowerShell Script Features
 
-- **Install:** `.\Generate-Portal_MyPortal.ps1` - Creates HTML file, registers protocol handlers, configures browser policies
-- **Uninstall:** `.\Generate-Portal_MyPortal.ps1 -Uninstall` - Removes HTML file, protocol handlers, and browser policies
+- **Install:** `.\Generate-Portal_MyPortal.ps1` - Creates HTML file and registers protocol handlers
+- **Uninstall:** `.\Generate-Portal_MyPortal.ps1 -Uninstall` - Removes HTML file and protocol handlers
 - **Protocol Handlers:** Registers `PortalMaker-*` custom protocols for legacy Windows apps (Notepad, Task Manager, etc.)
-- **Browser Prompts:** Optionally configures Edge/Chrome policies to suppress "Open app?" confirmation dialogs
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for enterprise deployment instructions.
 
