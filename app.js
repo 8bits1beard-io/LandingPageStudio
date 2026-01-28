@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.38';
+const APP_VERSION = '1.0.39';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -3261,8 +3261,9 @@ function generateHTML(useComputerNameVariable = false) {
         .links-container .standalone-links.ios-layout {
             display: grid;
             grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
-            gap: ${iosSpacing}rem !important;
+            gap: calc(${iosSpacing}rem * 3) !important;
             justify-items: center;
+            padding: calc(${iosSpacing}rem * 2) !important;
         }
 
         .standalone-links .link-button.style-ios {
@@ -3274,8 +3275,9 @@ function generateHTML(useComputerNameVariable = false) {
         .links-container .links-list.ios-layout {
             display: grid;
             grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
-            gap: ${iosSpacing}rem !important;
+            gap: calc(${iosSpacing}rem * 3) !important;
             justify-items: center;
+            padding: calc(${iosSpacing}rem * 2) !important;
         }
 
         .links-list.ios-layout li {
