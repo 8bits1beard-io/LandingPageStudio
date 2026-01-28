@@ -261,6 +261,14 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="timeGreeting" onchange="debouncedUpdatePreview()">
+                            <span>Time-based greeting</span>
+                        </label>
+                        <small class="form-hint">Prepends "Good morning/afternoon/evening" to greeting text</small>
+                    </div>
+
+                    <div class="form-group">
                         <label for="greetingFontSize">Greeting Font Size</label>
                         <div class="slider-row">
                             <input type="range" id="greetingFontSize" min="1.5" max="5" step="0.25" value="3" oninput="updateSliderValue(this); debouncedUpdatePreview()">

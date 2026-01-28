@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.33';
+const APP_VERSION = '1.0.34';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -34,7 +34,9 @@ const DEFAULTS = {
     bannerEnabled: false,
     bannerTitle: '',
     bannerMessage: '',
-    bannerStyle: 'info'
+    bannerStyle: 'info',
+    // Time-based greeting
+    timeGreeting: false
 };
 
 // Banner style colors
@@ -1387,7 +1389,9 @@ function saveState() {
             bannerEnabled: document.getElementById('bannerEnabled').checked,
             bannerTitle: document.getElementById('bannerTitle').value,
             bannerMessage: document.getElementById('bannerMessage').value,
-            bannerStyle: document.getElementById('bannerStyle').value
+            bannerStyle: document.getElementById('bannerStyle').value,
+            // Time-based greeting
+            timeGreeting: document.getElementById('timeGreeting').checked
         }
     };
     try {
@@ -1522,6 +1526,7 @@ function loadState() {
                 document.getElementById('bannerTitle').value = state.settings.bannerTitle || '';
                 document.getElementById('bannerMessage').value = state.settings.bannerMessage || '';
                 document.getElementById('bannerStyle').value = state.settings.bannerStyle || DEFAULTS.bannerStyle;
+                document.getElementById('timeGreeting').checked = state.settings.timeGreeting || false;
 
                 // Restore custom color inputs if custom theme
                 if (selectedTheme === 'custom') {
@@ -2182,6 +2187,7 @@ function generateHTML(useComputerNameVariable = false) {
     const cardStyle = document.getElementById('cardStyle').value || DEFAULTS.cardStyle;
     const visualEffects = document.getElementById('visualEffects').value || DEFAULTS.visualEffects;
     const openLinksNewTab = document.getElementById('openLinksNewTab').checked;
+    const timeGreeting = document.getElementById('timeGreeting').checked;
     const targetAttr = openLinksNewTab ? ' target="_blank" rel="noopener"' : '';
 
     // Announcement banner settings
@@ -2209,9 +2215,9 @@ function generateHTML(useComputerNameVariable = false) {
             <div class="standalone-links">
                 ${validUngrouped.map(link => {
                     const href = escapeHtml(link.url);
-                    const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
+                    const iconHtml = link.icon ? `<span class="tile-icon"><img class="link-icon" src="${escapeHtml(link.icon)}" alt=""></span>` : '';
                     const titleAttr = link.tooltip ? ` title="${escapeHtml(link.tooltip)}"` : '';
-                    return `<a href="${href}" class="link-button standalone style-${buttonStyle} size-${buttonSize}"${titleAttr}${targetAttr}>${iconHtml}${escapeHtml(link.name)}</a>`;
+                    return `<a href="${href}" class="link-button standalone style-${buttonStyle} size-${buttonSize}"${titleAttr}${targetAttr}>${iconHtml}<span class="tile-label">${escapeHtml(link.name)}</span></a>`;
                 }).join('')}
             </div>`;
     }
@@ -2233,9 +2239,9 @@ function generateHTML(useComputerNameVariable = false) {
                 <ul class="links-list">
                     ${validLinks.map(link => {
                         const href = escapeHtml(link.url);
-                        const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
+                        const iconHtml = link.icon ? `<span class="tile-icon"><img class="link-icon" src="${escapeHtml(link.icon)}" alt=""></span>` : '';
                         const titleAttr = link.tooltip ? ` title="${escapeHtml(link.tooltip)}"` : '';
-                        return `<li><a href="${href}" class="link-button style-${buttonStyle} size-${buttonSize}"${titleAttr}${targetAttr}>${iconHtml}${escapeHtml(link.name)}</a></li>`;
+                        return `<li><a href="${href}" class="link-button style-${buttonStyle} size-${buttonSize}"${titleAttr}${targetAttr}>${iconHtml}<span class="tile-label">${escapeHtml(link.name)}</span></a></li>`;
                     }).join('')}
                 </ul>
             </section>`;
@@ -2262,13 +2268,17 @@ function generateHTML(useComputerNameVariable = false) {
         </div>`;
     }
 
+    const greetingContent = timeGreeting
+        ? `<span id="time-greeting"></span> ${escapeHtml(greeting)}`
+        : escapeHtml(greeting);
+
     if (sideLogoUrl && !isSideLogoCorner) {
         // Side logo next to greeting
         const logoFirst = sideLogoPosition === 'left';
         if (greeting) {
             welcomeHeader += `
         <div class="greeting-row${sideLogoPosition === 'right' ? ' logo-right' : ''}">
-            ${logoFirst ? sideLogoHTML : ''}<h1 class="greeting-text">${escapeHtml(greeting)}</h1>${!logoFirst ? sideLogoHTML : ''}
+            ${logoFirst ? sideLogoHTML : ''}<h1 class="greeting-text">${greetingContent}</h1>${!logoFirst ? sideLogoHTML : ''}
         </div>`;
         } else {
             welcomeHeader += `
@@ -2278,7 +2288,7 @@ function generateHTML(useComputerNameVariable = false) {
         }
     } else {
         welcomeHeader += `
-        ${greeting ? `<h1 class="greeting-text">${escapeHtml(greeting)}</h1>` : ''}`;
+        ${greeting ? `<h1 class="greeting-text">${greetingContent}</h1>` : ''}`;
     }
 
     // Corner logo overlay HTML (rendered separately in body)
@@ -2316,7 +2326,8 @@ function generateHTML(useComputerNameVariable = false) {
             footerText,
             enableAutoRefresh,
             autoRefreshDelay,
-            autoRefreshUrl
+            autoRefreshUrl,
+            timeGreeting
         },
         theme: {
             selectedTheme,
@@ -2383,7 +2394,11 @@ function generateHTML(useComputerNameVariable = false) {
         }
 
         body {
-            background-color: var(--background);
+            background: var(--background);
+            background:
+                radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--link-bg) 15%, transparent) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, color-mix(in srgb, var(--heading-color) 10%, transparent) 0%, transparent 50%),
+                linear-gradient(160deg, var(--background) 0%, color-mix(in srgb, var(--background) 85%, black) 100%);
             color: var(--body-text);
             display: flex;
             flex-direction: column;
@@ -2615,11 +2630,17 @@ function generateHTML(useComputerNameVariable = false) {
 
         .greeting-text {
             font-size: ${greetingFontSize}rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
             color: var(--white);
             margin: 0 0 ${greetingSpacing}rem 0;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        #time-greeting {
+            opacity: 0.85;
+            font-weight: 700;
         }
 
         .greeting-row .greeting-text {
@@ -2636,12 +2657,13 @@ function generateHTML(useComputerNameVariable = false) {
         }
 
         .link-group {
+            position: relative;
             background-color: rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            padding: 1.25rem;
+            border-radius: 16px;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.2s ease;
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
         }
 
         .group-heading-row {
@@ -2650,7 +2672,7 @@ function generateHTML(useComputerNameVariable = false) {
             gap: 0.5rem;
             margin-bottom: 1rem;
             padding-bottom: 0.75rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .group-icon {
@@ -2660,13 +2682,14 @@ function generateHTML(useComputerNameVariable = false) {
         }
 
         .group-heading {
-            font-size: 0.6875rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             color: var(--heading-color);
             margin: 0;
-            opacity: 0.9;
+            opacity: 0.85;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
         }
 
         .links-list {
@@ -2727,19 +2750,38 @@ function generateHTML(useComputerNameVariable = false) {
             flex-shrink: 0;
         }
 
+        .tile-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        .tile-icon .link-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .tile-label {
+            font-weight: 500;
+            font-size: 0.875rem;
+            line-height: 1.3;
+        }
+
         .link-button:hover,
         .link-button:focus {
             background-color: var(--link-hover-bg);
             color: var(--link-hover-text);
             outline: none;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transform: scale(1.02);
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.2);
         }
 
         .link-button:active {
-            transform: translateY(0) scale(0.98);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
 
         footer {
@@ -2819,6 +2861,16 @@ function generateHTML(useComputerNameVariable = false) {
         .links-container.layout-list .link-button {
             justify-content: flex-start;
             padding: 0.875rem 1.25rem;
+        }
+
+        .links-container.layout-list .tile-icon {
+            width: 36px;
+            height: 36px;
+        }
+
+        .links-container.layout-list .tile-icon .link-icon {
+            width: 28px;
+            height: 28px;
         }
 
         .links-container.layout-list .standalone-links {
@@ -2914,6 +2966,21 @@ function generateHTML(useComputerNameVariable = false) {
             min-height: 100px;
         }
 
+        .links-container.layout-buttons .tile-icon {
+            width: 56px;
+            height: 56px;
+        }
+
+        .links-container.layout-buttons .tile-icon .link-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .links-container.layout-buttons .tile-label {
+            font-size: 0.8125rem;
+            text-align: center;
+        }
+
         .links-container.layout-buttons .link-icon {
             width: 32px;
             height: 32px;
@@ -2935,6 +3002,16 @@ function generateHTML(useComputerNameVariable = false) {
             padding: 1rem;
             min-height: 100px;
             min-width: unset;
+        }
+
+        .links-container.layout-buttons .standalone-links .tile-icon {
+            width: 56px;
+            height: 56px;
+        }
+
+        .links-container.layout-buttons .standalone-links .tile-icon .link-icon {
+            width: 48px;
+            height: 48px;
         }
 
         .links-container.layout-buttons .standalone-links .link-icon {
@@ -3032,6 +3109,17 @@ function generateHTML(useComputerNameVariable = false) {
             width: 16px;
             height: 16px;
         }
+        .link-button.size-small .tile-icon {
+            width: 32px;
+            height: 32px;
+        }
+        .link-button.size-small .tile-icon .link-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .link-button.size-small .tile-label {
+            font-size: 0.8125rem;
+        }
 
         .link-button.size-medium {
             padding: 1rem 1.5rem;
@@ -3050,39 +3138,97 @@ function generateHTML(useComputerNameVariable = false) {
             width: 24px;
             height: 24px;
         }
+        .link-button.size-large .tile-icon {
+            width: 48px;
+            height: 48px;
+        }
+        .link-button.size-large .tile-icon .link-icon {
+            width: 40px;
+            height: 40px;
+        }
+        .link-button.size-large .tile-label {
+            font-size: 1rem;
+        }
 
         /* Card style variations - use higher specificity to override layout defaults */
         body.card-style-subtle .links-container .link-group {
-            background-color: rgba(255, 255, 255, 0.06);
-            padding: 1.25rem;
-            border-radius: 14px;
-            box-shadow: none;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.card-style-subtle .links-container .link-group:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.2);
         }
 
         body.card-style-elevated .links-container .link-group {
-            background-color: rgba(255, 255, 255, 0.08);
-            padding: 1.25rem;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.card-style-elevated .links-container .link-group::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            border-radius: 16px 16px 0 0;
+            pointer-events: none;
+        }
+
+        body.card-style-elevated .links-container .link-group:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
         body.card-style-glass .links-container .link-group {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1.25rem;
-            border-radius: 14px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.card-style-glass .links-container .link-group:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
         body.card-style-bordered .links-container .link-group {
-            background: transparent;
-            padding: 1.25rem;
-            border-radius: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             box-shadow: none;
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.card-style-bordered .links-container .link-group:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.15);
         }
 
         /* Visual effects - subtle (smooth hover with slight lift) */
@@ -3221,6 +3367,17 @@ ${(showFooter && footerText) || (showDateTime && dateTimePosition === 'footer') 
         ${showDateTime && dateTimePosition === 'footer' ? `<p class="footer-datetime" id="datetime-display">--</p>` : ''}
         ${networkInFooter ? `<p>${escapeHtml(networkDisplayValue)}</p>` : ''}
     </footer>
+` : ''}
+${timeGreeting && greeting ? `
+    <script>
+        function updateTimeGreeting() {
+            var h = new Date().getHours();
+            var g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+            document.getElementById('time-greeting').textContent = g;
+        }
+        updateTimeGreeting();
+        setInterval(updateTimeGreeting, 60000);
+    <` + `/script>
 ` : ''}
 ${showDateTime ? `
     <script>
@@ -3931,6 +4088,8 @@ function applyImportedConfig(config) {
         document.getElementById('bannerTitle').value = config.settings.bannerTitle || '';
         document.getElementById('bannerMessage').value = config.settings.bannerMessage || '';
         document.getElementById('bannerStyle').value = config.settings.bannerStyle || DEFAULTS.bannerStyle;
+
+        document.getElementById('timeGreeting').checked = config.settings.timeGreeting || false;
     }
 
     // Apply theme
@@ -4064,6 +4223,8 @@ function resetAll() {
     document.getElementById('bannerTitle').value = '';
     document.getElementById('bannerMessage').value = '';
     document.getElementById('bannerStyle').value = DEFAULTS.bannerStyle;
+
+    document.getElementById('timeGreeting').checked = false;
 
     // Reset custom color inputs
     document.getElementById('customPrimary').value = DEFAULTS.customColors.primary;

@@ -1,6 +1,6 @@
 # PortalMaker
 
-**Version:** 1.0.33
+**Version:** 1.0.34
 **Author:** Joshua Walderbach
 **License:** [MIT](LICENSE)
 
@@ -23,6 +23,9 @@
 - **Group Styles** - Subtle, Elevated, Glass, or Bordered card appearances
 - **Animation Effects** - None, Subtle, or Enhanced animation options
 - **Button Sizes** - Small, Medium, or Large button sizing
+- **Time-Based Greeting** - Optional "Good morning/afternoon/evening" greeting prefix
+- **Glassmorphism Design** - Frosted glass cards with gradient mesh backgrounds
+- **Icon-Forward Tiles** - Large icon tiles with labels for app-launcher style
 - **Announcement Banner** - Optional banner with Info/Warning/Urgent styles
 - **Computer Name Display** - Show hostname or FQDN with flexible positioning (top-right, footer, or below greeting)
 - **FQDN Identifier** - Extract site/region from device FQDN via nslookup
