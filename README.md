@@ -1,7 +1,8 @@
 # PortalMaker
 
-**Version:** 1.0.20
+**Version:** 1.0.31
 **Author:** Joshua Walderbach
+**License:** [MIT](LICENSE)
 
 > Design branded portal pages for kiosks and curated user experiences. Visual editor with live preview and enterprise deployment.
 
@@ -18,7 +19,9 @@
 - **Icon Library** - 40+ built-in SVG icons for groups and links
 - **App Presets** - 21 built-in Windows apps plus custom user-defined applications
 - **Link Layouts** - Cards, List, or Grid display with configurable columns
-- **Button Styles** - Rounded, Square, or Text-only link buttons
+- **Button Styles** - Rounded, Square, Text-only, Gradient, Outline, Elevated, or Glass
+- **Group Styles** - Subtle, Elevated, Glass, or Bordered card appearances
+- **Animation Effects** - None, Subtle, or Enhanced animation options
 - **Button Sizes** - Small, Medium, or Large button sizing
 - **Announcement Banner** - Optional banner with Info/Warning/Urgent styles
 - **Computer Name Display** - Show hostname or FQDN with flexible positioning (top-right, footer, or below greeting)
@@ -54,7 +57,9 @@
 | Auto-Redirect | Redirect to another URL after specified seconds |
 | Announcement Banner | Optional banner with title, message, and style (Info/Warning/Urgent) |
 | Link Layout | Cards (default), List, or Grid display |
-| Button Style | Rounded (default), Square, or Text-only |
+| Button Style | Rounded (default), Square, Text-only, Gradient, Outline, Elevated, or Glass |
+| Group Style | Subtle (default), Elevated, Glass, or Bordered card appearances |
+| Animations | None, Subtle (default), or Enhanced animation effects |
 | Button Size | Small, Medium (default), or Large |
 | Script Name | Name used in the PowerShell script filename |
 | Destination Path | Where the portal saves on target machines |

@@ -217,6 +217,10 @@
                         <option value="rounded" selected>Rounded</option>
                         <option value="square">Square</option>
                         <option value="textonly">Text only</option>
+                        <option value="gradient">Gradient</option>
+                        <option value="outline">Outline</option>
+                        <option value="elevated">Elevated</option>
+                        <option value="glass">Glass</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -225,6 +229,23 @@
                         <option value="small">Small</option>
                         <option value="medium" selected>Medium</option>
                         <option value="large">Large</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cardStyle">Group Style</label>
+                    <select id="cardStyle" onchange="updatePreview()">
+                        <option value="subtle" selected>Subtle</option>
+                        <option value="elevated">Elevated</option>
+                        <option value="glass">Glass</option>
+                        <option value="bordered">Bordered</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="visualEffects">Animations</label>
+                    <select id="visualEffects" onchange="updatePreview()">
+                        <option value="none">None</option>
+                        <option value="subtle" selected>Subtle</option>
+                        <option value="enhanced">Enhanced</option>
                     </select>
                 </div>
                 </div>
@@ -566,7 +587,7 @@
     </main>
 
     <footer role="contentinfo">
-        <p>PortalMaker <span id="appVersion" aria-label="Version"></span> | Author: <a href="https://www.linkedin.com/in/joshua-walderbach" target="_blank" rel="noopener noreferrer">Joshua Walderbach</a></p>
+        <p>PortalMaker <span id="appVersion" aria-label="Version"></span> | Author: <a href="https://www.linkedin.com/in/joshua-walderbach" target="_blank" rel="noopener noreferrer">Joshua Walderbach</a> | <a href="LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a></p>
     </footer>
 
     <!-- Screen reader announcements -->

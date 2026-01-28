@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.30';
+const APP_VERSION = '1.0.31';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -28,6 +28,8 @@ const DEFAULTS = {
     buttonStyle: 'rounded',
     buttonSize: 'medium',
     gridColumns: '4',
+    cardStyle: 'subtle',
+    visualEffects: 'subtle',
     openLinksNewTab: false,
     // Announcement banner
     bannerEnabled: false,
@@ -1380,6 +1382,8 @@ function saveState() {
             buttonStyle: document.getElementById('buttonStyle').value,
             buttonSize: document.getElementById('buttonSize').value,
             gridColumns: document.getElementById('gridColumns').value,
+            cardStyle: document.getElementById('cardStyle').value,
+            visualEffects: document.getElementById('visualEffects').value,
             openLinksNewTab: document.getElementById('openLinksNewTab').checked,
             // Announcement banner
             bannerEnabled: document.getElementById('bannerEnabled').checked,
@@ -1513,6 +1517,8 @@ function loadState() {
                 document.getElementById('buttonSize').value = state.settings.buttonSize || DEFAULTS.buttonSize;
                 document.getElementById('openLinksNewTab').checked = state.settings.openLinksNewTab || false;
                 document.getElementById('gridColumns').value = state.settings.gridColumns || DEFAULTS.gridColumns;
+                document.getElementById('cardStyle').value = state.settings.cardStyle || DEFAULTS.cardStyle;
+                document.getElementById('visualEffects').value = state.settings.visualEffects || DEFAULTS.visualEffects;
 
                 // Restore announcement banner settings
                 document.getElementById('bannerEnabled').checked = state.settings.bannerEnabled || false;
@@ -2176,6 +2182,8 @@ function generateHTML(useComputerNameVariable = false) {
     const buttonStyle = document.getElementById('buttonStyle').value || DEFAULTS.buttonStyle;
     const buttonSize = document.getElementById('buttonSize').value || DEFAULTS.buttonSize;
     const gridColumns = document.getElementById('gridColumns').value || DEFAULTS.gridColumns;
+    const cardStyle = document.getElementById('cardStyle').value || DEFAULTS.cardStyle;
+    const visualEffects = document.getElementById('visualEffects').value || DEFAULTS.visualEffects;
     const openLinksNewTab = document.getElementById('openLinksNewTab').checked;
     const targetAttr = openLinksNewTab ? ' target="_blank" rel="noopener"' : '';
 
@@ -2372,7 +2380,9 @@ function generateHTML(useComputerNameVariable = false) {
 
         html, body {
             height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
@@ -2608,6 +2618,9 @@ function generateHTML(useComputerNameVariable = false) {
 
         .greeting-text {
             font-size: ${greetingFontSize}rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
             color: var(--white);
             margin: 0 0 ${greetingSpacing}rem 0;
         }
@@ -2626,11 +2639,12 @@ function generateHTML(useComputerNameVariable = false) {
         }
 
         .link-group {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
             padding: 1.25rem;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.2s ease;
         }
 
         .group-heading-row {
@@ -2638,8 +2652,8 @@ function generateHTML(useComputerNameVariable = false) {
             align-items: center;
             gap: 0.5rem;
             margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .group-icon {
@@ -2649,12 +2663,13 @@ function generateHTML(useComputerNameVariable = false) {
         }
 
         .group-heading {
-            font-size: 0.875rem;
+            font-size: 0.6875rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
             color: var(--heading-color);
             margin: 0;
+            opacity: 0.9;
         }
 
         .links-list {
@@ -2696,11 +2711,17 @@ function generateHTML(useComputerNameVariable = false) {
             padding: 1rem 1.5rem;
             font-size: 1rem;
             font-weight: 600;
-            border-radius: 8px;
-            border: 3px solid var(--link-bg);
-            transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+            letter-spacing: -0.01em;
+            border-radius: 10px;
+            border: none;
+            transition:
+                background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.15s ease,
+                transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease;
             min-height: 44px;
             min-width: 44px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .link-icon {
@@ -2714,12 +2735,14 @@ function generateHTML(useComputerNameVariable = false) {
             background-color: var(--link-hover-bg);
             color: var(--link-hover-text);
             outline: none;
-            box-shadow: 0 0 0 4px var(--link-bg);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: scale(1.02);
         }
 
         .link-button:active {
-            transform: scale(0.98);
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         footer {
@@ -2743,6 +2766,10 @@ function generateHTML(useComputerNameVariable = false) {
         @media (prefers-reduced-motion: reduce) {
             .link-button {
                 transition: none;
+                animation: none;
+            }
+            .effects-enhanced .link-button {
+                animation: none;
             }
         }
 
@@ -2939,6 +2966,66 @@ function generateHTML(useComputerNameVariable = false) {
             box-shadow: none;
         }
 
+        /* Gradient style - subtle depth with shine */
+        .link-button.style-gradient {
+            background: linear-gradient(180deg, var(--link-bg) 0%, color-mix(in srgb, var(--link-bg) 85%, black) 100%);
+            border: none;
+            box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .link-button.style-gradient:hover,
+        .link-button.style-gradient:focus {
+            background: linear-gradient(180deg, color-mix(in srgb, var(--link-hover-bg) 100%, white 10%) 0%, var(--link-hover-bg) 100%);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Outline style - minimal, elegant borders */
+        .link-button.style-outline {
+            background: transparent;
+            border: 2px solid var(--link-bg);
+            color: var(--link-bg);
+            box-shadow: none;
+        }
+
+        .link-button.style-outline:hover,
+        .link-button.style-outline:focus {
+            background: var(--link-bg);
+            color: var(--link-text);
+            border-color: var(--link-bg);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Elevated style - prominent soft shadows */
+        .link-button.style-elevated {
+            border: none;
+            box-shadow: 0 4px 14px -3px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .link-button.style-elevated:hover,
+        .link-button.style-elevated:focus {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.3), 0 4px 8px -2px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Glass style - frosted glass effect */
+        .link-button.style-glass {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: var(--body-text);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .link-button.style-glass:hover,
+        .link-button.style-glass:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px) scale(1.02);
+        }
+
         /* Button size variations */
         .link-button.size-small {
             padding: 0.6rem 1rem;
@@ -2965,6 +3052,68 @@ function generateHTML(useComputerNameVariable = false) {
         .link-button.size-large .link-icon {
             width: 24px;
             height: 24px;
+        }
+
+        /* Card style variations */
+        .card-style-subtle .link-group {
+            background-color: rgba(255, 255, 255, 0.06);
+            box-shadow: none;
+        }
+
+        .card-style-elevated .link-group {
+            background-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card-style-glass .link-group {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-style-bordered .link-group {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: none;
+        }
+
+        /* Visual effects - enhanced animations */
+        .effects-enhanced .link-button {
+            animation: fadeInUp 0.4s ease-out backwards;
+        }
+
+        .effects-enhanced .link-group:nth-child(1) .link-button { animation-delay: 0.05s; }
+        .effects-enhanced .link-group:nth-child(2) .link-button { animation-delay: 0.1s; }
+        .effects-enhanced .link-group:nth-child(3) .link-button { animation-delay: 0.15s; }
+        .effects-enhanced .link-group:nth-child(4) .link-button { animation-delay: 0.2s; }
+        .effects-enhanced .standalone-links .link-button { animation-delay: 0s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Visual effects - none (disable transforms) */
+        .effects-none .link-button {
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        .effects-none .link-button:hover,
+        .effects-none .link-button:focus {
+            transform: none;
+        }
+
+        .effects-none .link-button:active {
+            transform: none;
         }
 
         /* Announcement banner */
@@ -3008,7 +3157,7 @@ function generateHTML(useComputerNameVariable = false) {
         }
     </style>
 </head>
-<body>
+<body class="card-style-${cardStyle} effects-${visualEffects}">
     <a href="#main-content" class="skip-link">Skip to main content</a>
 ${showComputerName && computerNamePosition !== 'below-greeting' ? `
     <div class="computer-name ${computerNamePosition}" role="status" aria-label="Computer name: ${computerNameDisplay}">
@@ -3870,6 +4019,8 @@ function applyImportedConfig(config) {
         document.getElementById('buttonStyle').value = config.settings.buttonStyle || DEFAULTS.buttonStyle;
         document.getElementById('buttonSize').value = config.settings.buttonSize || DEFAULTS.buttonSize;
         document.getElementById('gridColumns').value = config.settings.gridColumns || DEFAULTS.gridColumns;
+        document.getElementById('cardStyle').value = config.settings.cardStyle || DEFAULTS.cardStyle;
+        document.getElementById('visualEffects').value = config.settings.visualEffects || DEFAULTS.visualEffects;
         document.getElementById('openLinksNewTab').checked = config.settings.openLinksNewTab || false;
 
         // Announcement banner
@@ -4002,6 +4153,8 @@ function resetAll() {
     document.getElementById('buttonStyle').value = DEFAULTS.buttonStyle;
     document.getElementById('buttonSize').value = DEFAULTS.buttonSize;
     document.getElementById('gridColumns').value = DEFAULTS.gridColumns;
+    document.getElementById('cardStyle').value = DEFAULTS.cardStyle;
+    document.getElementById('visualEffects').value = DEFAULTS.visualEffects;
     document.getElementById('openLinksNewTab').checked = DEFAULTS.openLinksNewTab;
 
     // Reset announcement banner settings
