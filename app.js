@@ -3257,10 +3257,11 @@ function generateHTML(useComputerNameVariable = false) {
         .link-button.style-ios.size-large .tile-icon .link-icon { width: 40px; height: 40px; }
         .link-button.style-ios.size-large .tile-label { font-size: 0.75rem; }
 
-        .standalone-links.ios-layout {
+        .standalone-links.ios-layout,
+        .links-container .standalone-links.ios-layout {
             display: grid;
             grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
-            gap: ${iosSpacing}rem;
+            gap: ${iosSpacing}rem !important;
             justify-items: center;
         }
 
@@ -3269,10 +3270,11 @@ function generateHTML(useComputerNameVariable = false) {
             width: 100%;
         }
 
-        .links-list.ios-layout {
+        .links-list.ios-layout,
+        .links-container .links-list.ios-layout {
             display: grid;
             grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
-            gap: ${iosSpacing}rem;
+            gap: ${iosSpacing}rem !important;
             justify-items: center;
         }
 
