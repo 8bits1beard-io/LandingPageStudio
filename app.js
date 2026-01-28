@@ -3261,7 +3261,7 @@ function generateHTML(useComputerNameVariable = false) {
         .links-container.layout-grid .standalone-links:has(.style-ios),
         .links-container.layout-buttons .standalone-links:has(.style-ios) {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
             gap: ${iosSpacing}rem;
             justify-items: center;
         }
@@ -3269,7 +3269,6 @@ function generateHTML(useComputerNameVariable = false) {
         .standalone-links .link-button.style-ios {
             min-width: unset;
             width: 100%;
-            max-width: 90px;
         }
 
         .links-list:has(.style-ios),
