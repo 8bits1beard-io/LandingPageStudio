@@ -2234,6 +2234,11 @@ function generateHTML(useComputerNameVariable = false) {
     const bannerColors = BANNER_STYLES[bannerStyle] || BANNER_STYLES.info;
 
     const colors = getActiveColors();
+    // Determine if link text color is light (for iOS icon filter)
+    const ltR = parseInt(colors.linkText.slice(1, 3), 16);
+    const ltG = parseInt(colors.linkText.slice(3, 5), 16);
+    const ltB = parseInt(colors.linkText.slice(5, 7), 16);
+    const isLinkTextLight = (ltR * 299 + ltG * 587 + ltB * 114) / 1000 > 128;
     const autoRefreshValid = autoRefreshUrl && isValidUrl(autoRefreshUrl);
     const shouldAutoRefresh = enableAutoRefresh && autoRefreshValid;
 
@@ -3205,7 +3210,7 @@ function generateHTML(useComputerNameVariable = false) {
         .link-button.style-ios .tile-icon .link-icon {
             width: 32px;
             height: 32px;
-            filter: brightness(0) invert(1);
+            filter: brightness(0)${isLinkTextLight ? ' invert(1)' : ''};
         }
 
         .link-button.style-ios .tile-label {
