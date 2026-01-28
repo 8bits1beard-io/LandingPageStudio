@@ -3735,8 +3735,6 @@ function Unregister-ProtocolHandler {
     }
 }
 
-}
-
 if ($Uninstall) {
     # Uninstall mode
     $logFile = Join-Path $logFolder "Uninstall-Portal_${sanitizedScriptName}_$timestamp.log"
