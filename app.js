@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.32';
+const APP_VERSION = '1.0.33';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -3051,47 +3051,67 @@ function generateHTML(useComputerNameVariable = false) {
             height: 24px;
         }
 
-        /* Card style variations */
-        .card-style-subtle .link-group {
+        /* Card style variations - use higher specificity to override layout defaults */
+        body.card-style-subtle .links-container .link-group {
             background-color: rgba(255, 255, 255, 0.06);
+            padding: 1.25rem;
+            border-radius: 14px;
             box-shadow: none;
         }
 
-        .card-style-elevated .link-group {
+        body.card-style-elevated .links-container .link-group {
             background-color: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.25rem;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .card-style-glass .link-group {
+        body.card-style-glass .links-container .link-group {
             background: rgba(255, 255, 255, 0.1);
+            padding: 1.25rem;
+            border-radius: 14px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.2);
         }
 
-        .card-style-bordered .link-group {
+        body.card-style-bordered .links-container .link-group {
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.25rem;
+            border-radius: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
             box-shadow: none;
         }
 
-        /* Visual effects - enhanced animations */
-        .effects-enhanced .link-button {
-            animation: fadeInUp 0.4s ease-out backwards;
+        /* Visual effects - subtle (smooth hover with slight lift) */
+        body.effects-subtle .link-button:hover,
+        body.effects-subtle .link-button:focus {
+            transform: translateY(-2px) scale(1.01);
         }
 
-        .effects-enhanced .link-group:nth-child(1) .link-button { animation-delay: 0.05s; }
-        .effects-enhanced .link-group:nth-child(2) .link-button { animation-delay: 0.1s; }
-        .effects-enhanced .link-group:nth-child(3) .link-button { animation-delay: 0.15s; }
-        .effects-enhanced .link-group:nth-child(4) .link-button { animation-delay: 0.2s; }
-        .effects-enhanced .standalone-links .link-button { animation-delay: 0s; }
+        /* Visual effects - enhanced (fade-in animation + more dramatic hover) */
+        body.effects-enhanced .link-button {
+            animation: fadeInUp 0.5s ease-out backwards;
+        }
+
+        body.effects-enhanced .link-group:nth-child(1) .link-button { animation-delay: 0.1s; }
+        body.effects-enhanced .link-group:nth-child(2) .link-button { animation-delay: 0.2s; }
+        body.effects-enhanced .link-group:nth-child(3) .link-button { animation-delay: 0.3s; }
+        body.effects-enhanced .link-group:nth-child(4) .link-button { animation-delay: 0.4s; }
+        body.effects-enhanced .standalone-links .link-button { animation-delay: 0.05s; }
+
+        body.effects-enhanced .link-button:hover,
+        body.effects-enhanced .link-button:focus {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
 
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -3099,17 +3119,18 @@ function generateHTML(useComputerNameVariable = false) {
             }
         }
 
-        /* Visual effects - none (disable transforms) */
-        .effects-none .link-button {
+        /* Visual effects - none (no transforms, minimal transitions) */
+        body.effects-none .link-button {
             transition: background-color 0.15s ease, color 0.15s ease;
         }
 
-        .effects-none .link-button:hover,
-        .effects-none .link-button:focus {
+        body.effects-none .link-button:hover,
+        body.effects-none .link-button:focus {
             transform: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .effects-none .link-button:active {
+        body.effects-none .link-button:active {
             transform: none;
         }
 
