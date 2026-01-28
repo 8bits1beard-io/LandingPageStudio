@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.29';
+const APP_VERSION = '1.0.30';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -2828,6 +2828,7 @@ function generateHTML(useComputerNameVariable = false) {
         .links-container.layout-grid .links-list {
             display: grid;
             grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
+            grid-auto-rows: 1fr;
             gap: 0.75rem;
         }
 
@@ -2838,6 +2839,7 @@ function generateHTML(useComputerNameVariable = false) {
         .links-container.layout-grid .standalone-links {
             display: grid;
             grid-template-columns: repeat(${gridColumns}, minmax(0, 1fr));
+            grid-auto-rows: 1fr;
             gap: 0.75rem;
             margin-top: 0;
         }
@@ -3205,6 +3207,32 @@ function getRequiredProtocolHandlers() {
     return Array.from(protocols);
 }
 
+// Get all non-web protocol schemes used in links (for browser policy suppression)
+function getAllProtocolSchemes() {
+    const schemes = new Set();
+    const webPrefixes = ['http://', 'https://', 'mailto:', 'tel:'];
+
+    function extractScheme(url) {
+        if (!url) return;
+        // Skip web URLs
+        for (const prefix of webPrefixes) {
+            if (url.toLowerCase().startsWith(prefix)) return;
+        }
+        // Extract scheme (everything before the first colon)
+        const colonIndex = url.indexOf(':');
+        if (colonIndex > 0) {
+            schemes.add(url.slice(0, colonIndex));
+        }
+    }
+
+    groups.forEach(group => {
+        group.links.forEach(link => extractScheme(link.url));
+    });
+    ungroupedLinks.forEach(link => extractScheme(link.url));
+
+    return Array.from(schemes);
+}
+
 // Generate PowerShell script
 function generatePowerShellScript() {
     const htmlContent = generateHTML(true);
@@ -3228,8 +3256,9 @@ function generatePowerShellScript() {
     // Get the filename from destination path for uninstall
     const fileName = destinationPath.substring(destinationPath.lastIndexOf('\\') + 1) || 'index.html';
 
-    // Get required protocol handlers
+    // Get required protocol handlers (for registry) and all schemes (for browser policy)
     const requiredProtocols = getRequiredProtocolHandlers();
+    const allProtocolSchemes = getAllProtocolSchemes();
     const suppressProtocolPrompts = document.getElementById('suppressProtocolPrompts')?.checked ?? true;
 
     // Generate protocol handler hashtable for PowerShell
@@ -3267,7 +3296,7 @@ ${protocolHashtable}
 
 # Browser protocol prompt settings
 $suppressProtocolPrompts = $${suppressProtocolPrompts}
-$protocolsForPolicy = @(${requiredProtocols.length > 0 ? requiredProtocols.map(p => `'${p}'`).join(', ') : ''})
+$protocolsForPolicy = @(${allProtocolSchemes.length > 0 ? allProtocolSchemes.map(p => `'${p}'`).join(', ') : ''})
 
 # Create log directory if it doesn't exist
 if (-not (Test-Path $logFolder)) {
