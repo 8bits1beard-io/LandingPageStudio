@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.28';
+const APP_VERSION = '1.0.29';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -2197,7 +2197,21 @@ function generateHTML(useComputerNameVariable = false) {
     // Build links HTML
     let linksHTML = '';
 
-    // Add grouped links
+    // Add standalone links first (no group heading)
+    const validUngrouped = ungroupedLinks.filter(l => l.name && l.url);
+    if (validUngrouped.length > 0) {
+        linksHTML += `
+            <div class="standalone-links">
+                ${validUngrouped.map(link => {
+                    const href = escapeHtml(link.url);
+                    const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
+                    const titleAttr = link.tooltip ? ` title="${escapeHtml(link.tooltip)}"` : '';
+                    return `<a href="${href}" class="link-button standalone style-${buttonStyle} size-${buttonSize}"${titleAttr}${targetAttr}>${iconHtml}${escapeHtml(link.name)}</a>`;
+                }).join('')}
+            </div>`;
+    }
+
+    // Add grouped links below standalone
     const validGroups = groups.filter(g => g.name && g.links.some(l => l.name && l.url));
     if (validGroups.length > 0) {
         linksHTML += validGroups.map(group => {
@@ -2221,20 +2235,6 @@ function generateHTML(useComputerNameVariable = false) {
                 </ul>
             </section>`;
         }).join('');
-    }
-
-    // Add standalone links (no group heading)
-    const validUngrouped = ungroupedLinks.filter(l => l.name && l.url);
-    if (validUngrouped.length > 0) {
-        linksHTML += `
-            <div class="standalone-links">
-                ${validUngrouped.map(link => {
-                    const href = escapeHtml(link.url);
-                    const iconHtml = link.icon ? `<img class="link-icon" src="${escapeHtml(link.icon)}" alt="">` : '';
-                    const titleAttr = link.tooltip ? ` title="${escapeHtml(link.tooltip)}"` : '';
-                    return `<a href="${href}" class="link-button standalone style-${buttonStyle} size-${buttonSize}"${titleAttr}${targetAttr}>${iconHtml}${escapeHtml(link.name)}</a>`;
-                }).join('')}
-            </div>`;
     }
 
     // If no links at all, show placeholder
@@ -2673,7 +2673,7 @@ function generateHTML(useComputerNameVariable = false) {
             flex-wrap: wrap;
             gap: 1rem;
             justify-content: center;
-            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .standalone-links .link-button {
