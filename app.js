@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.35';
+const APP_VERSION = '1.0.36';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -3139,6 +3139,86 @@ function generateHTML(useComputerNameVariable = false) {
             border-color: rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px) scale(1.02);
+        }
+
+        /* iOS App style - icon grid with labels underneath */
+        .link-button.style-ios {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0.75rem 0.5rem;
+            gap: 0.5rem;
+            border-radius: 12px;
+        }
+
+        .link-button.style-ios .tile-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            background: var(--link-bg);
+            box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.25s ease;
+        }
+
+        .link-button.style-ios .tile-icon .link-icon {
+            width: 32px;
+            height: 32px;
+            filter: brightness(0) invert(1);
+        }
+
+        .link-button.style-ios .tile-label {
+            font-size: 0.6875rem;
+            font-weight: 500;
+            color: var(--body-text);
+            line-height: 1.2;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .link-button.style-ios:hover,
+        .link-button.style-ios:focus {
+            background: rgba(255, 255, 255, 0.08);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .link-button.style-ios:hover .tile-icon {
+            transform: scale(1.08);
+            box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.3);
+        }
+
+        .link-button.style-ios:active {
+            transform: none;
+        }
+
+        .link-button.style-ios:active .tile-icon {
+            transform: scale(0.92);
+        }
+
+        .link-button.style-ios.size-small .tile-icon { width: 48px; height: 48px; border-radius: 11px; }
+        .link-button.style-ios.size-small .tile-icon .link-icon { width: 26px; height: 26px; }
+        .link-button.style-ios.size-small .tile-label { font-size: 0.625rem; }
+
+        .link-button.style-ios.size-large .tile-icon { width: 72px; height: 72px; border-radius: 17px; }
+        .link-button.style-ios.size-large .tile-icon .link-icon { width: 40px; height: 40px; }
+        .link-button.style-ios.size-large .tile-label { font-size: 0.75rem; }
+
+        .standalone-links:has(.style-ios) {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.75rem;
+            justify-items: center;
+        }
+
+        .standalone-links .link-button.style-ios {
+            min-width: unset;
+            width: 100%;
+            max-width: 90px;
         }
 
         /* Button size variations */
