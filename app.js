@@ -1,5 +1,5 @@
 // Default values
-const APP_VERSION = '1.0.26';
+const APP_VERSION = '1.0.27';
 const DEFAULTS = {
     theme: 'monochrome',
     customColors: { primary: '#0053E2', accent: '#FFC220' },
@@ -454,7 +454,7 @@ function validatePositions() {
 
 // Theme presets (all WCAG AA verified)
 const themes = {
-    walmart: { name: 'Walmart', primary: '#0053E2', accent: '#FFC220', linkBg: '#001E60', linkText: '#FFFFFF', linkHoverBg: '#FFC220', linkHoverText: '#001E60' },
+    walmart: { name: 'Walmart', primary: '#0053E2', accent: '#FFC220', linkBg: '#FFFFFF', linkText: '#000000', linkHoverBg: '#FFC220', linkHoverText: '#001E60' },
     sunset: { name: 'Sunset', primary: '#9a3412', accent: '#fbbf24' },
     violet: { name: 'Violet', primary: '#5b21b6', accent: '#c4b5fd' },
     slate: { name: 'Slate', primary: '#1e293b', accent: '#f59e0b' },
@@ -2629,6 +2629,8 @@ function generateHTML(useComputerNameVariable = false) {
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
         }
 
         .group-heading-row {
@@ -2662,6 +2664,7 @@ function generateHTML(useComputerNameVariable = false) {
             gap: 0.75rem;
             padding: 0;
             margin: 0;
+            flex: 1;
         }
 
         .standalone-links {
@@ -3164,9 +3167,10 @@ function updatePreview() {
     const bannerEnabled = document.getElementById('bannerEnabled').checked;
     document.getElementById('bannerOptionsGroup').style.display = bannerEnabled ? 'block' : 'none';
 
-    // Toggle grid columns visibility (show for cards and grid layouts)
+    // Toggle grid columns visibility and label (show for cards, grid, and buttons layouts)
     const linkLayout = document.getElementById('linkLayout').value;
     document.getElementById('gridColumnsGroup').style.display = linkLayout !== 'list' ? 'block' : 'none';
+    document.getElementById('gridColumnsLabel').textContent = linkLayout === 'cards' ? 'Cards per row' : 'Columns per row';
 
     // Save state to localStorage
     saveState();

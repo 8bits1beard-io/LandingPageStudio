@@ -75,25 +75,6 @@
                 <!-- Links Tab -->
                 <div id="tab-links" class="tab-panel active" role="tabpanel">
                 <!-- Link Groups -->
-                <section aria-labelledby="groups-heading">
-                    <h3 id="groups-heading" style="color: var(--primary); margin-bottom: 0.5rem;">Link Groups</h3>
-                    <p id="groups-description" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
-                        Organize links into groups with headings.
-                    </p>
-
-                    <div id="groupsContainer" class="groups-container" role="region" aria-labelledby="groups-heading" aria-describedby="groups-description" aria-live="polite">
-                        <!-- Groups will be added here dynamically -->
-                    </div>
-
-                    <div class="actions-bar">
-                        <button type="button" class="btn btn-primary" onclick="addGroup()" aria-describedby="groups-description">
-                            + Add Group
-                        </button>
-                    </div>
-                </section>
-
-                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
-
                 <!-- Standalone Links -->
                 <section aria-labelledby="ungrouped-heading">
                     <div class="section-header" id="ungrouped-links-header" onclick="toggleSection('ungrouped-links')" aria-expanded="true" aria-controls="ungrouped-links-content" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSection('ungrouped-links')}">
@@ -124,6 +105,25 @@
                             Add Application
                         </button>
                     </div>
+                    </div>
+                </section>
+
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+                <section aria-labelledby="groups-heading">
+                    <h3 id="groups-heading" style="color: var(--primary); margin-bottom: 0.5rem;">Link Groups</h3>
+                    <p id="groups-description" style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
+                        Organize links into groups with headings.
+                    </p>
+
+                    <div id="groupsContainer" class="groups-container" role="region" aria-labelledby="groups-heading" aria-describedby="groups-description" aria-live="polite">
+                        <!-- Groups will be added here dynamically -->
+                    </div>
+
+                    <div class="actions-bar">
+                        <button type="button" class="btn btn-primary" onclick="addGroup()" aria-describedby="groups-description">
+                            + Add Group
+                        </button>
                     </div>
                 </section>
 
@@ -203,7 +203,7 @@
                     </select>
                 </div>
                 <div class="form-group" id="gridColumnsGroup">
-                    <label for="gridColumns">Columns per row</label>
+                    <label for="gridColumns" id="gridColumnsLabel">Columns per row</label>
                     <select id="gridColumns" onchange="updatePreview()">
                         <option value="2">2</option>
                         <option value="3">3</option>
