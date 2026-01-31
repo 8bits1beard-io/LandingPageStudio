@@ -124,4 +124,3 @@ Edge, Chrome, Firefox, Safari
 | `README.md` | This documentation |
 | `DEPLOYMENT.md` | Enterprise deployment guide |
 | `CONTRIBUTING.md` | Developer documentation |
-
