@@ -3505,117 +3505,130 @@ function generateHTML(useComputerNameVariable = false) {
             box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.15);
         }
 
-        /* Card style: iOS - Expandable groups that reveal icons on hover */
+        /* Card style: iOS - Compact icons that expand on hover to show labels */
         body.card-style-ios .links-container .link-group {
             background: rgba(255, 255, 255, 0.10);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 1rem 1.25rem;
+            padding: 1rem;
             border-radius: 16px;
             border: none;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            max-height: 70px;
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                        background 0.3s ease,
+            transition: background 0.3s ease,
                         box-shadow 0.3s ease,
-                        padding 0.3s ease;
+                        padding 0.3s ease,
+                        transform 0.3s ease;
             cursor: pointer;
         }
 
         body.card-style-ios .links-container .link-group .group-heading-row {
             padding: 0;
-            margin-bottom: 0;
+            margin-bottom: 0.75rem;
             background: transparent;
             border-bottom: none;
             background-image: none;
-            transition: margin-bottom 0.3s ease;
         }
 
         body.card-style-ios .links-container .link-group .group-heading {
-            font-size: 1rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            text-transform: none;
-            letter-spacing: -0.01em;
-            opacity: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.7;
             color: var(--body-text);
         }
 
         body.card-style-ios .links-container .link-group .links-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
             padding: 0;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+            transition: gap 0.3s ease;
         }
 
         body.card-style-ios .links-container .link-group .links-list li {
             border: none;
             display: flex;
-            justify-content: center;
         }
 
+        /* Compact state: just icons */
         body.card-style-ios .links-container .link-group .link-button {
             flex-direction: column;
             align-items: center;
             text-align: center;
             background: transparent;
             border-radius: 12px;
-            padding: 0.75rem 0.5rem;
+            padding: 0.25rem;
             box-shadow: none;
-            gap: 0.5rem;
-            width: 100%;
-        }
-
-        body.card-style-ios .links-container .link-group .link-button:hover,
-        body.card-style-ios .links-container .link-group .link-button:focus {
-            background: rgba(255, 255, 255, 0.12);
-            transform: scale(1.05);
-            box-shadow: none;
+            gap: 0.25rem;
+            transition: padding 0.3s ease, gap 0.3s ease, background 0.2s ease;
         }
 
         body.card-style-ios .links-container .link-group .tile-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             background: var(--link-bg);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
         }
 
         body.card-style-ios .links-container .link-group .tile-icon .link-icon {
-            width: 26px;
-            height: 26px;
+            width: 22px;
+            height: 22px;
+            transition: width 0.3s ease, height 0.3s ease;
         }
 
         body.card-style-ios .links-container .link-group .tile-label {
-            font-size: 0.6875rem;
+            font-size: 0;
             font-weight: 500;
-            opacity: 0.9;
-            max-width: 70px;
+            opacity: 0;
+            max-width: 0;
             overflow: hidden;
+            transition: font-size 0.3s ease, opacity 0.3s ease, max-width 0.3s ease, margin-top 0.3s ease;
+        }
+
+        /* Expanded state on hover - icons grow, labels appear */
+        body.card-style-ios .links-container .link-group:hover {
+            background: rgba(255, 255, 255, 0.14);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 1.25rem;
+            transform: scale(1.02);
+        }
+
+        body.card-style-ios .links-container .link-group:hover .links-list {
+            gap: 1rem;
+        }
+
+        body.card-style-ios .links-container .link-group:hover .link-button {
+            padding: 0.5rem;
+            gap: 0.4rem;
+        }
+
+        body.card-style-ios .links-container .link-group:hover .tile-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 13px;
+        }
+
+        body.card-style-ios .links-container .link-group:hover .tile-icon .link-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        body.card-style-ios .links-container .link-group:hover .tile-label {
+            font-size: 0.6875rem;
+            opacity: 1;
+            max-width: 70px;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        /* Expanded state on hover */
-        body.card-style-ios .links-container .link-group:hover {
-            max-height: 500px;
-            background: rgba(255, 255, 255, 0.14);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            padding: 1.25rem;
-        }
-
-        body.card-style-ios .links-container .link-group:hover .group-heading-row {
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        body.card-style-ios .links-container .link-group:hover .links-list {
-            opacity: 1;
-            transform: translateY(0);
+        body.card-style-ios .links-container .link-group .link-button:hover,
+        body.card-style-ios .links-container .link-group .link-button:focus {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.08);
         }
 
         /* Card style: None - minimal, no visible container */
